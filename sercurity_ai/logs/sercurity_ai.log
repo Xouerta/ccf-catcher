@@ -1,0 +1,232 @@
+2025-03-25T21:15:44.672+08:00  INFO 22512 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Starting SercurityAiApplication using Java 21.0.6 with PID 22512 (C:\Users\26592\code\java\sercurity_ai\target\classes started by 26592 in C:\Users\26592\code\java\sercurity_ai)
+2025-03-25T21:15:44.674+08:00  INFO 22512 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-25T21:15:45.194+08:00  INFO 22512 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2025-03-25T21:15:45.243+08:00  INFO 22512 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 43 ms. Found 4 Elasticsearch repository interfaces.
+2025-03-25T21:15:45.979+08:00  INFO 22512 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-03-25T21:15:45.993+08:00  INFO 22512 --- [sercurity_ai] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-25T21:15:45.993+08:00  INFO 22512 --- [sercurity_ai] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-03-25T21:15:46.048+08:00  INFO 22512 --- [sercurity_ai] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-25T21:15:46.049+08:00  INFO 22512 --- [sercurity_ai] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1333 ms
+2025-03-25T21:15:47.590+08:00  WARN 22512 --- [sercurity_ai] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: ca49ebe4-6966-4001-a215-316be62d7b45
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-03-25T21:15:47.597+08:00  INFO 22512 --- [sercurity_ai] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-03-25T21:15:48.140+08:00  INFO 22512 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-03-25T21:15:48.148+08:00  INFO 22512 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Started SercurityAiApplication in 3.958 seconds (process running for 4.701)
+2025-03-25T21:15:55.182+08:00  INFO 22512 --- [sercurity_ai] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-25T21:15:55.182+08:00  INFO 22512 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-25T21:15:55.183+08:00  INFO 22512 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2025-03-25T21:15:55.895+08:00  INFO 22512 --- [sercurity_ai] [http-nio-8080-exec-4] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 186 ms
+2025-03-25T21:17:05.175+08:00  INFO 22512 --- [sercurity_ai] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-25T21:17:05.187+08:00  INFO 22512 --- [sercurity_ai] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-25T21:17:21.342+08:00  INFO 12108 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Starting SercurityAiApplication using Java 21.0.6 with PID 12108 (C:\Users\26592\code\java\sercurity_ai\target\classes started by 26592 in C:\Users\26592\code\java\sercurity_ai)
+2025-03-25T21:17:21.344+08:00  INFO 12108 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-25T21:17:21.880+08:00  INFO 12108 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2025-03-25T21:17:21.928+08:00  INFO 12108 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 42 ms. Found 4 Elasticsearch repository interfaces.
+2025-03-25T21:17:22.598+08:00  INFO 12108 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-03-25T21:17:22.612+08:00  INFO 12108 --- [sercurity_ai] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-25T21:17:22.612+08:00  INFO 12108 --- [sercurity_ai] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-03-25T21:17:22.667+08:00  INFO 12108 --- [sercurity_ai] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-25T21:17:22.668+08:00  INFO 12108 --- [sercurity_ai] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1282 ms
+2025-03-25T21:17:23.946+08:00  WARN 12108 --- [sercurity_ai] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 0aa51c19-356f-41db-af79-d75afa892fff
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-03-25T21:17:23.952+08:00  INFO 12108 --- [sercurity_ai] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-03-25T21:17:24.469+08:00  INFO 12108 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-03-25T21:17:24.477+08:00  INFO 12108 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Started SercurityAiApplication in 3.623 seconds (process running for 4.3)
+2025-03-25T21:17:27.553+08:00  INFO 12108 --- [sercurity_ai] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-25T21:17:27.553+08:00  INFO 12108 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-25T21:17:27.554+08:00  INFO 12108 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-03-25T22:32:27.841+08:00  INFO 12108 --- [sercurity_ai] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-25T22:32:27.858+08:00  INFO 12108 --- [sercurity_ai] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-25T22:32:30.126+08:00  INFO 23272 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Starting SercurityAiApplication using Java 21.0.6 with PID 23272 (C:\Users\26592\code\java\sercurity_ai\target\classes started by 26592 in C:\Users\26592\code\java\sercurity_ai)
+2025-03-25T22:32:30.128+08:00  INFO 23272 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-25T22:32:30.642+08:00  INFO 23272 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2025-03-25T22:32:30.694+08:00  INFO 23272 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 42 ms. Found 4 Elasticsearch repository interfaces.
+2025-03-25T22:32:31.349+08:00  INFO 23272 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-03-25T22:32:31.361+08:00  INFO 23272 --- [sercurity_ai] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-25T22:32:31.361+08:00  INFO 23272 --- [sercurity_ai] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-03-25T22:32:31.422+08:00  INFO 23272 --- [sercurity_ai] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-25T22:32:31.423+08:00  INFO 23272 --- [sercurity_ai] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1251 ms
+2025-03-25T22:32:32.616+08:00  WARN 23272 --- [sercurity_ai] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 4a217315-3580-4db2-9130-aa96689d20a7
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-03-25T22:32:32.621+08:00  INFO 23272 --- [sercurity_ai] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-03-25T22:32:33.085+08:00  INFO 23272 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-03-25T22:32:33.092+08:00  INFO 23272 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Started SercurityAiApplication in 3.433 seconds (process running for 4.105)
+2025-03-25T22:32:41.937+08:00  INFO 23272 --- [sercurity_ai] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-25T22:32:41.937+08:00  INFO 23272 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-25T22:32:41.938+08:00  INFO 23272 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-03-25T22:38:04.808+08:00  INFO 23272 --- [sercurity_ai] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-25T22:38:04.821+08:00  INFO 23272 --- [sercurity_ai] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-25T22:38:08.353+08:00  INFO 27728 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Starting SercurityAiApplication using Java 21.0.6 with PID 27728 (C:\Users\26592\code\java\sercurity_ai\target\classes started by 26592 in C:\Users\26592\code\java\sercurity_ai)
+2025-03-25T22:38:08.354+08:00  INFO 27728 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-25T22:38:08.863+08:00  INFO 27728 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2025-03-25T22:38:08.915+08:00  INFO 27728 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 46 ms. Found 4 Elasticsearch repository interfaces.
+2025-03-25T22:38:09.614+08:00  INFO 27728 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-03-25T22:38:09.627+08:00  INFO 27728 --- [sercurity_ai] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-25T22:38:09.627+08:00  INFO 27728 --- [sercurity_ai] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-03-25T22:38:09.683+08:00  INFO 27728 --- [sercurity_ai] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-25T22:38:09.683+08:00  INFO 27728 --- [sercurity_ai] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1285 ms
+2025-03-25T22:38:10.978+08:00  WARN 27728 --- [sercurity_ai] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 92bb576d-a49d-4709-93e7-865beab23c66
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-03-25T22:38:10.985+08:00  INFO 27728 --- [sercurity_ai] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-03-25T22:38:11.462+08:00  INFO 27728 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-03-25T22:38:11.470+08:00  INFO 27728 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Started SercurityAiApplication in 3.589 seconds (process running for 4.228)
+2025-03-25T22:38:16.689+08:00  INFO 27728 --- [sercurity_ai] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-25T22:38:16.689+08:00  INFO 27728 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-25T22:38:16.690+08:00  INFO 27728 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-03-25T22:44:07.000+08:00  INFO 27728 --- [sercurity_ai] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-25T22:44:07.012+08:00  INFO 27728 --- [sercurity_ai] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-25T22:44:10.078+08:00  INFO 26736 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Starting SercurityAiApplication using Java 21.0.6 with PID 26736 (C:\Users\26592\code\java\sercurity_ai\target\classes started by 26592 in C:\Users\26592\code\java\sercurity_ai)
+2025-03-25T22:44:10.080+08:00  INFO 26736 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-25T22:44:10.599+08:00  INFO 26736 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2025-03-25T22:44:10.650+08:00  INFO 26736 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 43 ms. Found 4 Elasticsearch repository interfaces.
+2025-03-25T22:44:11.351+08:00  INFO 26736 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-03-25T22:44:11.368+08:00  INFO 26736 --- [sercurity_ai] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-25T22:44:11.368+08:00  INFO 26736 --- [sercurity_ai] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-03-25T22:44:11.425+08:00  INFO 26736 --- [sercurity_ai] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-25T22:44:11.426+08:00  INFO 26736 --- [sercurity_ai] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1306 ms
+2025-03-25T22:44:12.537+08:00  WARN 26736 --- [sercurity_ai] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 395560e0-714f-49b3-bcb3-2aeff39aa0c8
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-03-25T22:44:12.544+08:00  INFO 26736 --- [sercurity_ai] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-03-25T22:44:13.028+08:00  INFO 26736 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-03-25T22:44:13.036+08:00  INFO 26736 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Started SercurityAiApplication in 3.436 seconds (process running for 4.125)
+2025-03-25T22:44:24.188+08:00  INFO 26736 --- [sercurity_ai] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-25T22:44:24.188+08:00  INFO 26736 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-25T22:44:24.190+08:00  INFO 26736 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-03-25T22:47:29.002+08:00  INFO 26736 --- [sercurity_ai] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-25T22:47:29.012+08:00  INFO 26736 --- [sercurity_ai] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-25T22:47:33.584+08:00  INFO 23032 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Starting SercurityAiApplication using Java 21.0.6 with PID 23032 (C:\Users\26592\code\java\sercurity_ai\target\classes started by 26592 in C:\Users\26592\code\java\sercurity_ai)
+2025-03-25T22:47:33.586+08:00  INFO 23032 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-25T22:47:34.071+08:00  INFO 23032 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2025-03-25T22:47:34.117+08:00  INFO 23032 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 41 ms. Found 4 Elasticsearch repository interfaces.
+2025-03-25T22:47:34.843+08:00  INFO 23032 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-03-25T22:47:34.856+08:00  INFO 23032 --- [sercurity_ai] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-25T22:47:34.857+08:00  INFO 23032 --- [sercurity_ai] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-03-25T22:47:34.915+08:00  INFO 23032 --- [sercurity_ai] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-25T22:47:34.916+08:00  INFO 23032 --- [sercurity_ai] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1289 ms
+2025-03-25T22:47:36.222+08:00  WARN 23032 --- [sercurity_ai] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: ab442fdb-26a9-4022-b7e2-9d3eaf240ffa
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-03-25T22:47:36.227+08:00  INFO 23032 --- [sercurity_ai] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-03-25T22:47:36.708+08:00  INFO 23032 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-03-25T22:47:36.714+08:00  INFO 23032 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Started SercurityAiApplication in 3.575 seconds (process running for 4.198)
+2025-03-25T22:47:41.241+08:00  INFO 23032 --- [sercurity_ai] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-25T22:47:41.241+08:00  INFO 23032 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-25T22:47:41.242+08:00  INFO 23032 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-03-25T22:49:30.659+08:00  INFO 23032 --- [sercurity_ai] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-25T22:49:30.670+08:00  INFO 23032 --- [sercurity_ai] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-25T22:49:34.543+08:00  INFO 28176 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Starting SercurityAiApplication using Java 21.0.6 with PID 28176 (C:\Users\26592\code\java\sercurity_ai\target\classes started by 26592 in C:\Users\26592\code\java\sercurity_ai)
+2025-03-25T22:49:34.545+08:00  INFO 28176 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-25T22:49:35.055+08:00  INFO 28176 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2025-03-25T22:49:35.103+08:00  INFO 28176 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 42 ms. Found 4 Elasticsearch repository interfaces.
+2025-03-25T22:49:35.787+08:00  INFO 28176 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-03-25T22:49:35.801+08:00  INFO 28176 --- [sercurity_ai] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-25T22:49:35.802+08:00  INFO 28176 --- [sercurity_ai] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-03-25T22:49:35.859+08:00  INFO 28176 --- [sercurity_ai] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-25T22:49:35.860+08:00  INFO 28176 --- [sercurity_ai] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1275 ms
+2025-03-25T22:49:37.070+08:00  WARN 28176 --- [sercurity_ai] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: dabd9e61-d1ed-4d42-a3b0-f10588958b74
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-03-25T22:49:37.077+08:00  INFO 28176 --- [sercurity_ai] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-03-25T22:49:37.612+08:00  INFO 28176 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-03-25T22:49:37.620+08:00  INFO 28176 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Started SercurityAiApplication in 3.536 seconds (process running for 4.179)
+2025-03-25T22:49:39.207+08:00  INFO 28176 --- [sercurity_ai] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-25T22:49:39.207+08:00  INFO 28176 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-25T22:49:39.208+08:00  INFO 28176 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-03-25T22:49:39.925+08:00  INFO 28176 --- [sercurity_ai] [http-nio-8080-exec-7] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 194 ms
+2025-03-25T22:51:33.106+08:00  INFO 28176 --- [sercurity_ai] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-25T22:51:33.118+08:00  INFO 28176 --- [sercurity_ai] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-25T22:51:36.297+08:00  INFO 27132 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Starting SercurityAiApplication using Java 21.0.6 with PID 27132 (C:\Users\26592\code\java\sercurity_ai\target\classes started by 26592 in C:\Users\26592\code\java\sercurity_ai)
+2025-03-25T22:51:36.299+08:00  INFO 27132 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-25T22:51:36.786+08:00  INFO 27132 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2025-03-25T22:51:36.836+08:00  INFO 27132 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 45 ms. Found 4 Elasticsearch repository interfaces.
+2025-03-25T22:51:37.501+08:00  INFO 27132 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-03-25T22:51:37.514+08:00  INFO 27132 --- [sercurity_ai] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-25T22:51:37.514+08:00  INFO 27132 --- [sercurity_ai] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-03-25T22:51:37.569+08:00  INFO 27132 --- [sercurity_ai] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-25T22:51:37.570+08:00  INFO 27132 --- [sercurity_ai] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1232 ms
+2025-03-25T22:51:38.726+08:00  WARN 27132 --- [sercurity_ai] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: c40d4107-8c37-4da2-8538-aaf6b0beb532
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-03-25T22:51:38.731+08:00  INFO 27132 --- [sercurity_ai] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-03-25T22:51:39.248+08:00  INFO 27132 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-03-25T22:51:39.254+08:00  INFO 27132 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Started SercurityAiApplication in 3.403 seconds (process running for 4.069)
+2025-03-25T22:51:42.960+08:00  INFO 27132 --- [sercurity_ai] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-25T22:51:42.960+08:00  INFO 27132 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-25T22:51:42.961+08:00  INFO 27132 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-03-25T22:52:24.622+08:00  INFO 27132 --- [sercurity_ai] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-25T22:52:24.634+08:00  INFO 27132 --- [sercurity_ai] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-25T22:52:28.717+08:00  INFO 12484 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Starting SercurityAiApplication using Java 21.0.6 with PID 12484 (C:\Users\26592\code\java\sercurity_ai\target\classes started by 26592 in C:\Users\26592\code\java\sercurity_ai)
+2025-03-25T22:52:28.719+08:00  INFO 12484 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-25T22:52:29.244+08:00  INFO 12484 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2025-03-25T22:52:29.296+08:00  INFO 12484 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 43 ms. Found 4 Elasticsearch repository interfaces.
+2025-03-25T22:52:29.978+08:00  INFO 12484 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-03-25T22:52:29.991+08:00  INFO 12484 --- [sercurity_ai] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-25T22:52:29.992+08:00  INFO 12484 --- [sercurity_ai] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-03-25T22:52:30.049+08:00  INFO 12484 --- [sercurity_ai] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-25T22:52:30.050+08:00  INFO 12484 --- [sercurity_ai] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1290 ms
+2025-03-25T22:52:31.257+08:00  WARN 12484 --- [sercurity_ai] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 3210f39a-a7a2-48d1-9250-ec9f5d08af79
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-03-25T22:52:31.263+08:00  INFO 12484 --- [sercurity_ai] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-03-25T22:52:31.771+08:00  INFO 12484 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-03-25T22:52:31.779+08:00  INFO 12484 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Started SercurityAiApplication in 3.509 seconds (process running for 4.143)
+2025-03-25T22:52:36.975+08:00  INFO 12484 --- [sercurity_ai] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-25T22:52:36.975+08:00  INFO 12484 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-25T22:52:36.976+08:00  INFO 12484 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-03-25T22:59:40.628+08:00  INFO 12484 --- [sercurity_ai] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-25T22:59:40.641+08:00  INFO 12484 --- [sercurity_ai] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-03-25T22:59:45.308+08:00  INFO 27252 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Starting SercurityAiApplication using Java 21.0.6 with PID 27252 (C:\Users\26592\code\java\sercurity_ai\target\classes started by 26592 in C:\Users\26592\code\java\sercurity_ai)
+2025-03-25T22:59:45.310+08:00  INFO 27252 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-03-25T22:59:45.928+08:00  INFO 27252 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Elasticsearch repositories in DEFAULT mode.
+2025-03-25T22:59:45.981+08:00  INFO 27252 --- [sercurity_ai] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 46 ms. Found 4 Elasticsearch repository interfaces.
+2025-03-25T22:59:46.665+08:00  INFO 27252 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-03-25T22:59:46.678+08:00  INFO 27252 --- [sercurity_ai] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-03-25T22:59:46.678+08:00  INFO 27252 --- [sercurity_ai] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-03-25T22:59:46.734+08:00  INFO 27252 --- [sercurity_ai] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-03-25T22:59:46.735+08:00  INFO 27252 --- [sercurity_ai] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1378 ms
+2025-03-25T22:59:48.002+08:00  WARN 27252 --- [sercurity_ai] [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 1c5c4cb3-68cf-498d-9357-100117b30cad
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-03-25T22:59:48.008+08:00  INFO 27252 --- [sercurity_ai] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-03-25T22:59:48.515+08:00  INFO 27252 --- [sercurity_ai] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-03-25T22:59:48.521+08:00  INFO 27252 --- [sercurity_ai] [main] c.ccf.sercurity.SercurityAiApplication   : Started SercurityAiApplication in 3.69 seconds (process running for 4.336)
+2025-03-25T22:59:53.463+08:00  INFO 27252 --- [sercurity_ai] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-25T22:59:53.463+08:00  INFO 27252 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-03-25T22:59:53.464+08:00  INFO 27252 --- [sercurity_ai] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-03-25T23:00:44.607+08:00  INFO 27252 --- [sercurity_ai] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-03-25T23:00:44.621+08:00  INFO 27252 --- [sercurity_ai] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete

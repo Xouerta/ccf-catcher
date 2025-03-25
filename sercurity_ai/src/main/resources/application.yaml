@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: sercurity_ai
+  elasticsearch:
+    uris: http://192.168.1.7:9200
+    username: elastic
+    password: Secur3P@ssw0rd
+
+kangaroohy:
+  minio:
+    endpoint: http://192.168.1.7:9000
+    access-key: admin
+    secret-key: 12345678
+
+logging:
+  file:
+    name: ./logs/${spring.application.name}.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      file-name-pattern: ./logs/${spring.application.name}.%d{yyyy-MM-dd}.%i.log
+      max-history: 365
+
+ccf:
+  security:
+    key: hdfsjklfhsdjflkdsajfkjksdlfjlkjdsklfjkldajslkf
+
+file:
+  upload:
+    dir: ./tmp/
+
+malicious:
+  detection:
+    api:
+      url: http://localhost:8000/detect
