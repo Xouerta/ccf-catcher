@@ -5,6 +5,12 @@ spring:
     uris: http://192.168.1.7:9200
     username: elastic
     password: Secur3P@ssw0rd
+  kafka:
+    consumer:
+      bootstrap-servers: 192.168.1.7:9092
+      auto-offset-reset: earliest
+      group-id: security
+
 
 kangaroohy:
   minio:
