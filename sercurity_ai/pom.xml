@@ -85,6 +85,10 @@
             <artifactId>minio-spring-boot-starter</artifactId>
             <version>3.1.8.5.11</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
