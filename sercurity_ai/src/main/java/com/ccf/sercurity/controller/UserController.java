@@ -1,6 +1,7 @@
 package com.ccf.sercurity.controller;
 
 
+import com.ccf.sercurity.model.enums.SendCodeEnum;
 import com.ccf.sercurity.service.UserService;
 import com.ccf.sercurity.vo.LoginRequestVO;
 import com.ccf.sercurity.vo.LoginResponeVO;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
@@ -27,6 +29,12 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody RegisterRequestVO vo) {
         userService.createUser(vo);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/code")
+    public ResponseEntity<Void> getCode(@RequestParam String email, @RequestParam("type") SendCodeEnum type) {
+        userService.sendCode(email, type);
         return ResponseEntity.ok().build();
     }
 }
