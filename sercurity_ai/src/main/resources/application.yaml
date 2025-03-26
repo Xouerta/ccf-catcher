@@ -2,7 +2,7 @@ spring:
   application:
     name: sercurity_ai
   elasticsearch:
-    uris: http://192.168.1.7:9200
+    uris: http://100.118.110.15:9200
     username: elastic
     password: Secur3P@ssw0rd
   kafka:
@@ -10,6 +10,9 @@ spring:
       bootstrap-servers: 192.168.1.7:9092
       auto-offset-reset: earliest
       group-id: security
+  data:
+    redis:
+      host: 192.168.1.7
 
 
 kangaroohy:
@@ -39,3 +42,7 @@ malicious:
   detection:
     api:
       url: http://localhost:8000/detect
+admin:
+  email: 2659279285@qq.com
+  password: aA112233
+#  init: true
