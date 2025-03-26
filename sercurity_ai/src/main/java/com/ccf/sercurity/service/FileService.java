@@ -4,6 +4,7 @@ import com.ccf.sercurity.error.ErrorEnum;
 import com.ccf.sercurity.error.PlatformException;
 import com.ccf.sercurity.model.FileInfo;
 import com.ccf.sercurity.repository.FileRepository;
+import com.ccf.sercurity.service.util.StorageService;
 import com.ccf.sercurity.vo.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

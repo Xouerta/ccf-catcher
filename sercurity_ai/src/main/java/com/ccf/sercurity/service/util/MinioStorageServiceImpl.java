@@ -1,4 +1,4 @@
-package com.ccf.sercurity.service;
+package com.ccf.sercurity.service.util;
 
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
