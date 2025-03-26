@@ -52,16 +52,10 @@ public class LogRecord {
     private String source;
     
     /**
-     * 执行操作的用户名
+     * 执行操作的主机
      */
     @Field(type = FieldType.Keyword)
-    private String username;
-    
-    /**
-     * 用户IP地址
-     */
-    @Field(type = FieldType.Keyword)
-    private String ipAddress;
+    private String host;
     
     /**
      * 其他元数据信息，可存储任意相关信息

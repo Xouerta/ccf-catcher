@@ -8,6 +8,4 @@ import java.util.List;
 
 public interface LogRepository extends ElasticsearchRepository<LogRecord, String> {
     List<LogRecord> findByLevelAndTimestampBetween(String level, Date startDate, Date endDate);
-    List<LogRecord> findByUsername(String username);
-    List<LogRecord> findByIpAddress(String ipAddress);
-} 
+}
