@@ -4,10 +4,13 @@ import com.ccf.sercurity.annotation.Token;
 import com.ccf.sercurity.model.FileInfo;
 import com.ccf.sercurity.service.FileService;
 import com.ccf.sercurity.service.MaliciousDetectionService;
+import com.ccf.sercurity.vo.PageResult;
 import com.github.xingfudeshi.knife4j.annotations.ApiOperationSupport;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -37,14 +40,14 @@ public class FileController {
         try {
             // 保存文件信息
             FileInfo fileInfo = fileService.saveFile(file, userId);
-            
+
             // 检测文件是否恶意
             boolean isMalicious = maliciousDetectionService.detectMaliciousFile(fileInfo, file);
-            
+
             if (isMalicious) {
                 return ResponseEntity.badRequest().body(Map.of("msg", "文件上传失败: 文件被检测为恶意文件", "code", 1043));
             }
-            
+
             return ResponseEntity.ok(fileInfo);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("文件上传失败: " + e.getMessage());
@@ -56,5 +59,16 @@ public class FileController {
         FileInfo fileInfo = fileService.getFileById(id);
         return ResponseEntity.ok(fileInfo);
     }
+
+    @GetMapping(value = "/list")
+    public ResponseEntity<PageResult<?>> listFiles(
+            @RequestHeader("Authorization") @Token String userId,
+            @Min(1)
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
+
+        return ResponseEntity.ok(fileService.listFiles(userId, page, size));
+    }
+
 
 } 

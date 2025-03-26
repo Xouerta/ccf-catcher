@@ -4,8 +4,11 @@ import com.ccf.sercurity.error.ErrorEnum;
 import com.ccf.sercurity.error.PlatformException;
 import com.ccf.sercurity.model.FileInfo;
 import com.ccf.sercurity.repository.FileRepository;
+import com.ccf.sercurity.vo.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -99,5 +102,18 @@ public class FileService {
     public FileInfo getFileById(String id) {
         return fileRepository.findById(id).orElseThrow(() ->
                 new RuntimeException("File not found with id: " + id));
+    }
+
+    public PageResult<FileInfo> listFiles(String userId, Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+
+        Page<FileInfo> pages = fileRepository.searchFileInfoByUploadFileUserId(userId, pageRequest);
+        PageResult<FileInfo> pageResult = new PageResult<>();
+        pageResult.setTotal(pages.getTotalElements());
+        pageResult.setPage(pages.getNumber() + 1);
+        pageResult.setSize(pages.getSize());
+        pageResult.setList(pages.getContent());
+
+        return pageResult;
     }
 } 
