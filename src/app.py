@@ -1,19 +1,19 @@
+import json
 import os
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+import subprocess
+import tempfile  # 临时文件处理
 from datetime import datetime
 from os import environ, makedirs
-import pandas as pd
-import subprocess
+
 import joblib
-from kafka import KafkaProducer
-import json
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-from apscheduler.schedulers.background import BackgroundScheduler  # 定时任务库
+import pandas as pd
 import requests  # HTTP请求库
-import tempfile  # 临时文件处理
-import time
+from apscheduler.schedulers.background import BackgroundScheduler  # 定时任务库
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from kafka import KafkaProducer
+from watchdog.events import FileSystemEventHandler
+from watchdog.observers import Observer
 
 app = Flask(__name__)
 
