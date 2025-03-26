@@ -6,19 +6,13 @@ import com.ccf.sercurity.model.FileInfo;
 import com.ccf.sercurity.repository.FileRepository;
 import com.ccf.sercurity.vo.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * 文件服务类
@@ -29,12 +23,6 @@ public class FileService {
 
     private final static String fileBuketName = "file";
     private final static String blank = "/";
-
-    /**
-     * 文件上传目录路径
-     */
-    @Value("${file.upload.dir}")
-    private String uploadDir;
 
     /**
      * 文件信息仓库接口
