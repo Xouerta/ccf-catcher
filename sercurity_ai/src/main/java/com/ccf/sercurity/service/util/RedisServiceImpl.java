@@ -130,7 +130,7 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public Long sAdd(String key, Long time, Object... values) {
-        BoundSetOperations<String, Object> setOps =  redisTemplate.boundSetOps(key);
+        BoundSetOperations<String, Object> setOps = redisTemplate.boundSetOps(key);
         Duration ttl = Duration.ofSeconds(time);
         for (Object value : values) {
             setOps.add((String) value);

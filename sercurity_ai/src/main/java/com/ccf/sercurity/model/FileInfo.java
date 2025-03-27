@@ -18,7 +18,7 @@ import java.util.Date;
 @Data
 @Document(indexName = "files")
 public class FileInfo {
-    
+
     /**
      * 文件唯一标识符
      */
@@ -27,44 +27,44 @@ public class FileInfo {
 
     @Field(type = FieldType.Keyword)
     private String uploadFileUserId;
-    
+
     /**
      * 原始文件名
      */
     @Field(type = FieldType.Keyword)
     private String originalName;
-    
+
     /**
      * 存储的文件名（包含UUID前缀以避免冲突）
      */
     @Field(type = FieldType.Keyword)
     private transient String storedName;
-    
+
     /**
      * 文件在服务器上的存储路径
      */
     @Field(type = FieldType.Text)
     private transient String filePath;
-    
+
     /**
      * 文件大小（字节）
      */
     @Field(type = FieldType.Long)
     private long fileSize;
-    
+
     /**
      * 文件内容类型/MIME类型
      */
     @Field(type = FieldType.Keyword)
     private String contentType;
-    
+
     /**
      * 文件上传时间
      */
     @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date uploadTime;
-    
+
     /**
      * 文件是否被检测为恶意文件的标志
      */

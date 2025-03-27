@@ -1,7 +1,5 @@
 package com.ccf.sercurity.annotation;
 
-import org.springframework.web.bind.annotation.RequestHeader;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

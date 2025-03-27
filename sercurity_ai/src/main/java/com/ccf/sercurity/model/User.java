@@ -19,51 +19,51 @@ import java.util.List;
 @Data
 @Document(indexName = "users")
 public class User {
-    
+
     /**
      * 用户唯一标识符
      */
     @Id
     private String id;
-    
+
     /**
      * 用户名，用于登录
      */
     @Field(type = FieldType.Keyword)
     private String username;
-    
+
     /**
      * 密码（加密存储）
      */
     @Field(type = FieldType.Text)
     private transient String password;
-    
+
     /**
      * 用户邮箱
      */
     @Field(type = FieldType.Keyword)
     private String email;
-    
+
     /**
      * 用户角色/权限列表
      */
     @Field(type = FieldType.Keyword)
     private List<String> roles;
-    
+
     /**
      * 账户创建时间
      */
     @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createdAt;
-    
+
     /**
      * 最后登录时间
      */
     @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date lastLogin;
-    
+
     /**
      * 账户是否激活
      */

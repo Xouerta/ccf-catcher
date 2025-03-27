@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface TrafficRepository extends ElasticsearchRepository<TrafficData, String> {
     List<TrafficData> findBySourceIpAndTimestampBetween(String sourceIp, Date startDate, Date endDate);
+
     List<TrafficData> findByIsSuspicious(boolean isSuspicious);
+
     List<TrafficData> findByResponseCodeGreaterThanEqual(int responseCode);
 } 

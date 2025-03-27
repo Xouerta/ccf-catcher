@@ -8,8 +8,8 @@ import com.ccf.sercurity.jwt.JwtUtils;
 import com.ccf.sercurity.model.User;
 import com.ccf.sercurity.model.enums.SendCodeEnum;
 import com.ccf.sercurity.repository.UserRepository;
-import com.ccf.sercurity.util.VerificationCodeGenerator;
 import com.ccf.sercurity.service.util.RedisService;
+import com.ccf.sercurity.util.VerificationCodeGenerator;
 import com.ccf.sercurity.vo.LoginRequestVO;
 import com.ccf.sercurity.vo.LoginResponeVO;
 import com.ccf.sercurity.vo.RegisterRequestVO;
@@ -69,6 +69,7 @@ public class UserService {
     private final AdminConfig adminConfig;
 
     private final RedisService redisService;
+
     /**
      * 构造函数，注入依赖
      *
@@ -118,13 +119,13 @@ public class UserService {
 
         // 加密密码
         user.setPassword(passwordEncoder.encode(vo.password()));
-        
+
         // 设置创建时间
         user.setCreatedAt(new Date());
-        
+
         // 默认激活账户
         user.setActive(true);
-        
+
         // 保存用户
 
         return userRepository.save(user);
@@ -132,7 +133,7 @@ public class UserService {
 
     /**
      * 根据用户名查找用户
-     * 
+     *
      * @param email 邮箱
      * @return 用户信息（可选）
      */
@@ -144,7 +145,7 @@ public class UserService {
      * 验证码
      *
      * @param email 邮箱
-     * @param type true 注册  false 修改密码
+     * @param type  true 注册  false 修改密码
      */
     // todo redis  login 验证码
     public void getCode(String email, boolean type) {
@@ -176,20 +177,20 @@ public class UserService {
 
     /**
      * 更新用户的最后登录时间
-     * 
+     *
      * @param username 用户名
     public void updateLastLogin(String username) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            user.setLastLogin(new Date());
-            userRepository.save(user);
-        }
+    Optional<User> userOpt = userRepository.findByUsername(username);
+    if (userOpt.isPresent()) {
+    User user = userOpt.get();
+    user.setLastLogin(new Date());
+    userRepository.save(user);
+    }
     }
 
-    *//**
+     *//**
      * 禁用用户账号
-     * 
+     *
      * @param username 用户名
      * @return 更新后的用户对象
      * @throws RuntimeException 如果用户不存在
@@ -202,9 +203,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    *//**
+    */
+
+    /**
      * 启用用户账号
-     * 
+     *
      * @return 更新后的用户对象
      * @throws RuntimeException 如果用户不存在
      *//*

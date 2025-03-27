@@ -23,7 +23,7 @@ public interface StorageService {
     /**
      * 列出所有的桶
      */
-     List<String> listBuckets();
+    List<String> listBuckets();
 
     /**
      * 下载一个文件
