@@ -1,4 +1,7 @@
 spring:
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
   application:
     name: sercurity_ai
   elasticsearch:
@@ -13,7 +16,23 @@ spring:
   data:
     redis:
       host: 192.168.1.7
-
+  mail:
+    host: smtp.163.com
+    username: 15524737150@163.com
+    password: CDqeie8jnbh8G4Up
+    port: 465
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
 
 kangaroohy:
   minio:
@@ -33,10 +52,6 @@ logging:
 ccf:
   security:
     key: hdfsjklfhsdjflkdsajfkjksdlfjlkjdsklfjkldajslkf
-
-file:
-  upload:
-    dir: ./tmp/
 
 malicious:
   detection:
