@@ -2,6 +2,7 @@ package com.ccf.sercurity.service;
 
 import com.ccf.sercurity.config.AdminConfig;
 import com.ccf.sercurity.config.MailSendConfig;
+import com.ccf.sercurity.config.PasswordConfig;
 import com.ccf.sercurity.error.ErrorEnum;
 import com.ccf.sercurity.error.PlatformException;
 import com.ccf.sercurity.jwt.JwtUtils;
@@ -15,6 +16,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.List;
@@ -31,7 +33,6 @@ public class UserService {
 
     @PostConstruct
     private void init() {
-
         Optional<User> user = this.userRepository.findByEmail(adminConfig.getEmail());
         if (user.isPresent()) {
             admin = user.get().getId();
@@ -46,6 +47,11 @@ public class UserService {
             admin = userRepository.save(adminUser).getId();
         }
     }
+
+    /**
+     * HTTP客户端
+     */
+    private final RestTemplate restTemplate;
 
     public static String admin;
 
@@ -67,6 +73,8 @@ public class UserService {
 
     private final RedisService redisService;
 
+    private final PasswordConfig passwordConfig;
+
     /**
      * 构造函数，注入依赖
      *
@@ -74,12 +82,19 @@ public class UserService {
      * @param passwordEncoder 密码编码器
      */
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AdminConfig adminConfig, RedisService redisService, MailSendConfig mailSendConfig) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       AdminConfig adminConfig,
+                       RedisService redisService,
+                       MailSendConfig mailSendConfig,
+                       PasswordConfig passwordConfig) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.adminConfig = adminConfig;
         this.redisService = redisService;
         this.mailSendConfig = mailSendConfig;
+        this.restTemplate = new RestTemplate();
+        this.passwordConfig = passwordConfig;
     }
 
     public LoginResponeVO login(LoginRequestVO vo) {
@@ -104,6 +119,10 @@ public class UserService {
      * @throws RuntimeException 如果用户名或邮箱已存在
      */
     public User createUser(RegisterRequestVO vo) {
+        if (!this.checkPassword(vo.password())) {
+            throw new PlatformException(ErrorEnum.WEAK_PASSWORD);
+        }
+
         // 检查邮箱是否已存在
         if (userRepository.existsByEmail(vo.email())) {
             throw new PlatformException(ErrorEnum.USER_EXIST);
@@ -180,8 +199,14 @@ public class UserService {
         return new UserInfoResponeVO(user.getId(), user.getUsername(), user.getCreatedAt());
     }
 
-    public void checkPassword(CheckPasswordRequestVO vo) {
+    public Boolean checkPassword(CheckPasswordRequestVO vo) {
         // TODO  所有weakpassword放在redis中
+//        this.restTemplate
+        return false;
+    }
+
+    public Boolean checkPassword(String password) {
+        return this.checkPassword(new CheckPasswordRequestVO(password));
     }
 
     /**
@@ -231,17 +256,29 @@ public class UserService {
     /**
      * 更新用户密码
      *
-     * @param username 用户名
-     * @param newPassword 新密码
+     * @param vo request
      * @return 更新后的用户对象
-     * @throws RuntimeException 如果用户不存在
+     * @throws PlatformException 如果用户不存在
      */
-    public User updatePassword(String email, String newPassword) {
-        User user = this.userRepository.findByEmail(email)
+    public void updatePassword(UpdatePasswordRequestVO vo) {
+        String code = (String) redisService.get(RedisPrefixEnum.UPDATE_PASSWORD_CODE + vo.email());
+        if (code == null) {
+            throw new PlatformException(ErrorEnum.CODE_NO_TIME_OR_NO);
+        }
+        if (!code.equalsIgnoreCase(vo.code())) {
+            throw new PlatformException(ErrorEnum.CODE_ERROR);
+        }
+        if (!this.checkPassword(vo.newPassword())) {
+            throw new PlatformException(ErrorEnum.WEAK_PASSWORD);
+        }
+
+        User user = this.userRepository.findByEmail(vo.email())
                 .orElseThrow(() -> new PlatformException(ErrorEnum.USER_NOT_EXIST));
 
-        user.setPassword(passwordEncoder.encode(newPassword));
-        return userRepository.save(user);
+        User save = new User();
+        save.setId(user.getId());
+        save.setPassword(passwordEncoder.encode(vo.newPassword()));
+        this.userRepository.save(save);
     }
 
 }

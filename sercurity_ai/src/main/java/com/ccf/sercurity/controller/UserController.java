@@ -60,4 +60,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserInfo(userId));
     }
 
+    @Validated
+    @PostMapping("/updatePassword")
+    public ResponseEntity<Void> updatePassword(@RequestBody UpdatePasswordRequestVO vo) {
+        userService.updatePassword(vo);
+        return ResponseEntity.ok().build();
+    }
 }
