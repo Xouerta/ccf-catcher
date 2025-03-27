@@ -60,4 +60,7 @@ malicious:
 admin:
   email: 2659279285@qq.com
   password: aA112233
+password:
+  api:
+    url: http://localhost:6000
 #  init: true

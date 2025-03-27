@@ -49,6 +49,7 @@ public enum ErrorEnum {
     EXCEPTION_PARAM(1040, "参数异常"),
     MESSAGE_ME(1041, "不能给自己发送消息"),
     MAX_TOKEN_CARD(1042, "达到最多5端登录"),
+    WEAK_PASSWORD(1043, "密码强度不够")
     ;
     private final int code;
     private final String msg;
