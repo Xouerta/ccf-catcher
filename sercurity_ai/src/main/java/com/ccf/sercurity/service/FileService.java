@@ -6,6 +6,7 @@ import com.ccf.sercurity.model.FileInfo;
 import com.ccf.sercurity.repository.FileRepository;
 import com.ccf.sercurity.service.util.StorageService;
 import com.ccf.sercurity.vo.PageResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,7 @@ import java.util.Date;
  * 文件服务类
  * 负责处理文件上传、存储和检索相关操作
  */
+@Slf4j
 @Service
 public class FileService {
 
@@ -72,12 +74,16 @@ public class FileService {
         FileInfo info = fileRepository.save(fileInfo);
         // 保存文件到Minio
         storageService.uploadFile(file.getInputStream(), fileBuketName, userId + blank + info.getId() + '_' + file.getOriginalFilename());
+
+        log.info("用户 {} 上传文件 {} 成功", userId, fileName);
         return info;
     }
 
     public FileInfo updateFileInfoById(FileInfo file) {
         fileRepository.findById(file.getId()).orElseThrow(() ->
                 new PlatformException(ErrorEnum.NET_ERROR));
+
+        log.info("{} 更新文件信息成功", file.getId());
         return fileRepository.save(file);
     }
 
@@ -95,6 +101,7 @@ public class FileService {
 
     public PageResult<FileInfo> listFiles(String userId, Integer page, Integer size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
+        log.info("用户 {} 查询文件列表成功", userId);
 
         Page<FileInfo> pages = fileRepository.searchFileInfoByUploadFileUserId(userId, pageRequest);
         PageResult<FileInfo> pageResult = new PageResult<>();
