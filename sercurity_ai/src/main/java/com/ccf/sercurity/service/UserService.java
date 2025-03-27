@@ -6,14 +6,11 @@ import com.ccf.sercurity.error.ErrorEnum;
 import com.ccf.sercurity.error.PlatformException;
 import com.ccf.sercurity.jwt.JwtUtils;
 import com.ccf.sercurity.model.User;
-import com.ccf.sercurity.model.enums.SendCodeEnum;
+import com.ccf.sercurity.model.enums.RedisPrefixEnum;
 import com.ccf.sercurity.repository.UserRepository;
 import com.ccf.sercurity.service.util.RedisService;
 import com.ccf.sercurity.util.VerificationCodeGenerator;
-import com.ccf.sercurity.vo.LoginRequestVO;
-import com.ccf.sercurity.vo.LoginResponeVO;
-import com.ccf.sercurity.vo.RegisterRequestVO;
-import com.ccf.sercurity.vo.UserInfoResponeVO;
+import com.ccf.sercurity.vo.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -111,6 +108,13 @@ public class UserService {
         if (userRepository.existsByEmail(vo.email())) {
             throw new PlatformException(ErrorEnum.USER_EXIST);
         }
+        String code = (String) redisService.get(RedisPrefixEnum.REGISTER_CODE.getPrefix() + vo.email());
+        if (code == null) {
+            throw new PlatformException(ErrorEnum.CODE_NO_TIME_OR_NO);
+        }
+        if (!code.equalsIgnoreCase(vo.code())) {
+            throw new PlatformException(ErrorEnum.CODE_ERROR);
+        }
 
         User user = new User();
         user.setEmail(vo.email());
@@ -127,7 +131,6 @@ public class UserService {
         user.setActive(true);
 
         // 保存用户
-
         return userRepository.save(user);
     }
 
@@ -151,15 +154,21 @@ public class UserService {
     public void getCode(String email, boolean type) {
         boolean exists = userRepository.existsByEmail(email);
         String code = VerificationCodeGenerator.generateVerificationCode(5);
+        if (redisService.get(RedisPrefixEnum.REGISTER_CODE.getPrefix() + email) != null
+                || redisService.get(RedisPrefixEnum.UPDATE_PASSWORD_CODE.getPrefix() + email) != null) {
+            throw new PlatformException(ErrorEnum.CODE_SEND);
+        }
         if (type) {
             if (!exists) {
                 mailSendConfig.send(email, "注册验证码", String.format(EMAIL_CODE_HTML, code));
+                redisService.set(RedisPrefixEnum.REGISTER_CODE.getPrefix() + email, code, RedisPrefixEnum.REGISTER_CODE.getExpireTime());
                 return;
             } else {
                 throw new PlatformException(ErrorEnum.USER_EXIST);
             }
         }
         mailSendConfig.send(email, "修改密码验证码", String.format(EMAIL_CODE_HTML, code));
+        redisService.set(RedisPrefixEnum.UPDATE_PASSWORD_CODE.getPrefix() + email, code, RedisPrefixEnum.UPDATE_PASSWORD_CODE.getExpireTime());
     }
 
     public UserInfoResponeVO getUserInfo(String userId) {
@@ -171,8 +180,8 @@ public class UserService {
         return new UserInfoResponeVO(user.getId(), user.getUsername(), user.getCreatedAt());
     }
 
-    public void checkPassword(String password) {
-        // TODO
+    public void checkPassword(CheckPasswordRequestVO vo) {
+        // TODO  所有weakpassword放在redis中
     }
 
     /**
@@ -235,11 +244,4 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void sendCode(String email, SendCodeEnum type) {
-        if (this.userRepository.findByEmail(email)
-                .isPresent()) {
-            throw new PlatformException(ErrorEnum.USER_EXIST);
-        }
-
-    }
 }
