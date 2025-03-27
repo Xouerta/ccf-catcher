@@ -6,6 +6,16 @@ import java.util.Set;
 
 public interface RedisService {
 
+    Long add(String key, String... values);
+
+    Long remove(String key, Object... values);
+
+    Set<Object> members(String key);
+
+    Boolean isMember(String key, Object value);
+
+    Long size(String key);
+
     /**
      * 保存属性
      */

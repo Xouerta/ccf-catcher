@@ -16,6 +16,31 @@ public class RedisServiceImpl implements RedisService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    // 添加元素到集合
+    public Long add(String key, String... values) {
+        return redisTemplate.opsForSet().add(key, values);
+    }
+
+    // 移除集合中的元素
+    public Long remove(String key, Object... values) {
+        return redisTemplate.opsForSet().remove(key, values);
+    }
+
+    // 获取集合所有元素
+    public Set<Object> members(String key) {
+        return redisTemplate.opsForSet().members(key);
+    }
+
+    // 判断元素是否存在
+    public Boolean isMember(String key, Object value) {
+        return redisTemplate.opsForSet().isMember(key, value);
+    }
+
+    // 获取集合大小
+    public Long size(String key) {
+        return redisTemplate.opsForSet().size(key);
+    }
+
     @Override
     public void set(String key, Object value, long time) {
         redisTemplate.opsForValue().set(key, value, time, TimeUnit.SECONDS);
