@@ -1,5 +1,6 @@
 package com.ccf.sercurity.vo;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
 public record RegisterRequestVO(
@@ -8,6 +9,9 @@ public record RegisterRequestVO(
         @NotNull
         String password,
         @NotNull
-        String email
+        @Email
+        String email,
+        @NotNull
+        String code
 ) {
 }
