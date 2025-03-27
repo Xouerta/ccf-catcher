@@ -5,7 +5,7 @@ spring:
   application:
     name: sercurity_ai
   elasticsearch:
-    uris: http://100.118.110.15:9200
+    uris: http://192.168.1.7:9200
     username: elastic
     password: Secur3P@ssw0rd
   kafka:
@@ -62,5 +62,5 @@ admin:
   password: aA112233
 password:
   api:
-    url: http://localhost:6000
+    url: http://192.168.1.7:5500/predict
 #  init: true
