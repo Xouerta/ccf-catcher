@@ -21,16 +21,14 @@ public class UserController {
         this.userService = userService;
     }
 
-    @Validated
     @PostMapping("/login")
-    public ResponseEntity<LoginResponeVO> login(@RequestBody LoginRequestVO vo) {
+    public ResponseEntity<LoginResponeVO> login(@Validated @RequestBody LoginRequestVO vo) {
         LoginResponeVO login = userService.login(vo);
         return ResponseEntity.ok(login);
     }
 
-    @Validated
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequestVO vo) {
+    public ResponseEntity<Void> register(@Validated @RequestBody RegisterRequestVO vo) {
         userService.createUser(vo);
         return ResponseEntity.ok().build();
     }
@@ -38,19 +36,18 @@ public class UserController {
     /**
      * 检查password是否为weak
      */
-    @Validated
     @PostMapping("/checkPassword")
     @Operation(summary = "检查password是否为weak")
-    public ResponseEntity<Void> checkPassword(@RequestBody CheckPasswordRequestVO vo) {
-        userService.checkPassword(vo);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CheckPasswordResponeVO> checkPassword(@Validated @RequestBody CheckPasswordRequestVO vo) {
+        return ResponseEntity.ok(userService.checkPassword(vo));
     }
 
 
     @Validated
     @GetMapping("/code")
     @Operation(summary = "获取验证码 10分钟有效   true 注册  false 修改密码")
-    public ResponseEntity<String> getCode(@RequestParam("email") @Email String email, @RequestParam("type") boolean type) {
+    public ResponseEntity<String> getCode(@RequestParam("email") @Email String email,
+                                          @RequestParam("type") boolean type) {
         userService.getCode(email, type);
         return ResponseEntity.ok().build();
     }
@@ -60,9 +57,8 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserInfo(userId));
     }
 
-    @Validated
     @PostMapping("/updatePassword")
-    public ResponseEntity<Void> updatePassword(@RequestBody UpdatePasswordRequestVO vo) {
+    public ResponseEntity<Void> updatePassword(@Validated @RequestBody UpdatePasswordRequestVO vo) {
         userService.updatePassword(vo);
         return ResponseEntity.ok().build();
     }
