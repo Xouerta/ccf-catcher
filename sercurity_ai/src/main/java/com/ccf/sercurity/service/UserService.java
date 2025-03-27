@@ -1,16 +1,19 @@
 package com.ccf.sercurity.service;
 
 import com.ccf.sercurity.config.AdminConfig;
+import com.ccf.sercurity.config.MailSendConfig;
 import com.ccf.sercurity.error.ErrorEnum;
 import com.ccf.sercurity.error.PlatformException;
 import com.ccf.sercurity.jwt.JwtUtils;
 import com.ccf.sercurity.model.User;
 import com.ccf.sercurity.model.enums.SendCodeEnum;
 import com.ccf.sercurity.repository.UserRepository;
+import com.ccf.sercurity.util.VerificationCodeGenerator;
 import com.ccf.sercurity.service.util.RedisService;
 import com.ccf.sercurity.vo.LoginRequestVO;
 import com.ccf.sercurity.vo.LoginResponeVO;
 import com.ccf.sercurity.vo.RegisterRequestVO;
+import com.ccf.sercurity.vo.UserInfoResponeVO;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +29,8 @@ import java.util.Optional;
  */
 @Service
 public class UserService {
+
+    private final static String EMAIL_CODE_HTML = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>电子邮件验证</title><style>body{font-family:Arial,sans-serif;background-color:#f4f4f4;margin:0;padding:0;}.container{max-width:600px;margin:0 auto;padding:20px;background-color:#fff;border-radius:5px;box-shadow:0 2px 4px rgba(0,0,0,.1);}.code{font-size:24px;font-weight:bold;text-align:center;padding:20px 0;border-bottom:1px solid #ccc;}.note{font-size:12px;color:#999;text-align:center;margin-top:20px;}</style></head><body><div class=\"container\"><h1>电子邮件验证</h1><p>您的验证码是：</p><div class=\"code\">%s</div><p>请在验证表单中输入此代码以完成注册。</p><p class=\"note\">注意：此代码有效期为10分钟。</p></div></body></html>\n";
 
     @PostConstruct
     private void init() {
@@ -57,6 +62,10 @@ public class UserService {
      */
     private final PasswordEncoder passwordEncoder;
 
+
+    private final MailSendConfig mailSendConfig;
+
+
     private final AdminConfig adminConfig;
 
     private final RedisService redisService;
@@ -67,11 +76,12 @@ public class UserService {
      * @param passwordEncoder 密码编码器
      */
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AdminConfig adminConfig, RedisService redisService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AdminConfig adminConfig, RedisService redisService, MailSendConfig mailSendConfig) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.adminConfig = adminConfig;
         this.redisService = redisService;
+        this.mailSendConfig = mailSendConfig;
     }
 
     public LoginResponeVO login(LoginRequestVO vo) {
@@ -108,13 +118,13 @@ public class UserService {
 
         // 加密密码
         user.setPassword(passwordEncoder.encode(vo.password()));
-
+        
         // 设置创建时间
         user.setCreatedAt(new Date());
-
+        
         // 默认激活账户
         user.setActive(true);
-
+        
         // 保存用户
 
         return userRepository.save(user);
@@ -122,7 +132,7 @@ public class UserService {
 
     /**
      * 根据用户名查找用户
-     *
+     * 
      * @param email 邮箱
      * @return 用户信息（可选）
      */
@@ -131,21 +141,55 @@ public class UserService {
     }
 
     /**
-     * 更新用户的最后登录时间
+     * 验证码
      *
-     * @param username 用户名
-    public void updateLastLogin(String username) {
-    Optional<User> userOpt = userRepository.findByUsername(username);
-    if (userOpt.isPresent()) {
-    User user = userOpt.get();
-    user.setLastLogin(new Date());
-    userRepository.save(user);
-    }
+     * @param email 邮箱
+     * @param type true 注册  false 修改密码
+     */
+    // todo redis  login 验证码
+    public void getCode(String email, boolean type) {
+        boolean exists = userRepository.existsByEmail(email);
+        String code = VerificationCodeGenerator.generateVerificationCode(5);
+        if (type) {
+            if (!exists) {
+                mailSendConfig.send(email, "注册验证码", String.format(EMAIL_CODE_HTML, code));
+                return;
+            } else {
+                throw new PlatformException(ErrorEnum.USER_EXIST);
+            }
+        }
+        mailSendConfig.send(email, "修改密码验证码", String.format(EMAIL_CODE_HTML, code));
     }
 
-     *//**
+    public UserInfoResponeVO getUserInfo(String userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            throw new PlatformException(ErrorEnum.USER_NOT_EXIST);
+        }
+        User user = userOpt.get();
+        return new UserInfoResponeVO(user.getId(), user.getUsername(), user.getCreatedAt());
+    }
+
+    public void checkPassword(String password) {
+        // TODO
+    }
+
+    /**
+     * 更新用户的最后登录时间
+     * 
+     * @param username 用户名
+    public void updateLastLogin(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            user.setLastLogin(new Date());
+            userRepository.save(user);
+        }
+    }
+
+    *//**
      * 禁用用户账号
-     *
+     * 
      * @param username 用户名
      * @return 更新后的用户对象
      * @throws RuntimeException 如果用户不存在
@@ -158,12 +202,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    */
-
-    /**
+    *//**
      * 启用用户账号
-     *
-     * @param username 用户名
+     * 
      * @return 更新后的用户对象
      * @throws RuntimeException 如果用户不存在
      *//*
