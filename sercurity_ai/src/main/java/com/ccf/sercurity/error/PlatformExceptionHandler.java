@@ -60,16 +60,10 @@ public class PlatformExceptionHandler {
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<Map<String, Object>> handlePlatformHandlerMethodValidationException(HandlerMethodValidationException e) {
         Map<String, Object> errors = new HashMap<>();
-        StringBuffer buffer = new StringBuffer();
         e.getAllErrors().forEach(error -> {
-            System.out.println(error);
-//            String fieldName = error.getMethodParameter().getParameterName();
-//            String errorMessage = error.getResolvableErrors().getFirst().getDefaultMessage();
-//            errors.put(fieldName, errorMessage);
-//            buffer.append(String.format("不合格字段 %s %s  ", fieldName, errorMessage));
+            errors.put("msg", error.getDefaultMessage());
         });
 
-        log.warn(buffer.toString());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 }
