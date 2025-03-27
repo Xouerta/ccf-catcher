@@ -1,24 +1,31 @@
 package com.ccf.sercurity.service;
 
+import com.ccf.sercurity.config.LogConfig;
 import com.ccf.sercurity.model.LogRecord;
 import com.ccf.sercurity.repository.LogRepository;
+import com.ccf.sercurity.vo.LogInfo;
+import com.ccf.sercurity.vo.PageResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 日志服务类
@@ -34,30 +41,36 @@ public class LogService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final RestTemplate restTemplate;
+
+    private final LogConfig logConfig;
+
     /**
      * 构造函数，注入日志仓库
      *
      * @param logRepository 日志仓库接口
      */
     @Autowired
-    public LogService(LogRepository logRepository) {
+    public LogService(LogRepository logRepository, LogConfig logConfig) {
         this.logRepository = logRepository;
+        this.restTemplate = new RestTemplate();
+        this.logConfig = logConfig;
     }
 
     /**
      * 记录新日志
-     * @param message   消息队列中获取的
      *
+     * @param message 消息队列中获取的
      */
     public void createLog(String message) throws JsonProcessingException {
         log.info("Received log: {}", message);
 
         Map map = objectMapper.readValue(message, Map.class);
         LogRecord logEntry = LogParser.parseLogLine(String.valueOf(map.get("data")));
-        System.out.println(logEntry);
-        logEntry.setLevel(Boolean.getBoolean(String.valueOf(map.get("result"))) ? "ERROR" : "INFO" );
+        logEntry.setLevel(Boolean.getBoolean(String.valueOf(map.get("result"))) ? "ERROR" : "INFO");
 
         this.logRepository.save(logEntry);
+        log.info("Log saved: {}", logEntry);
     }
 
     /**
@@ -70,6 +83,32 @@ public class LogService {
      */
     public List<LogRecord> findLogsByLevelAndTimeRange(String level, Date startDate, Date endDate) {
         return logRepository.findByLevelAndTimestampBetween(level, startDate, endDate);
+    }
+
+    public PageResult<LogInfo> listLogs(String userId, @Min(1) Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        log.info("用户 {} 请求查看日志", userId);
+
+        Page<LogRecord> pages = logRepository.findBy(pageRequest);
+
+        List<LogInfo> list = pages.getContent()
+                .stream().map(
+                        log -> new LogInfo(
+                                log.getId(),
+                                log.getHost(),
+                                log.getSource(),
+                                log.getMessage(),
+                                "ERROR".equals(log.getLevel()),
+                                log.getTimestamp()
+                        )
+                ).toList();
+
+        PageResult<LogInfo> pageResult = new PageResult<>();
+        pageResult.setTotal(pages.getTotalElements());
+        pageResult.setPage(pages.getNumber() + 1);
+        pageResult.setSize(pages.getSize());
+        pageResult.setList(list);
+        return pageResult;
     }
 
 
@@ -104,11 +143,13 @@ public class LogService {
 
     @EventListener(ContextRefreshedEvent.class)
     public void handleContextRefreshed() {
-        // 上下文刷新事件处理
+//        restTemplate.getForObject()
+        log.info(logConfig.getStartUrl());
     }
 
     @EventListener(ContextClosedEvent.class)
     public void handleContextClosed() {
         // 上下文关闭事件处理
+        log.info("Context closed event received.");
     }
 }
