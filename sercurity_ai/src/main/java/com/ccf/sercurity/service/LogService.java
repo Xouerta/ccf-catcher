@@ -67,10 +67,19 @@ public class LogService {
 
         Map map = objectMapper.readValue(message, Map.class);
         LogRecord logEntry = LogParser.parseLogLine(String.valueOf(map.get("data")));
-        logEntry.setLevel(Boolean.getBoolean(String.valueOf(map.get("result"))) ? "ERROR" : "INFO");
+        assert logEntry != null;
+        logEntry.setLevel(setResult(map.get("result")));
 
         this.logRepository.save(logEntry);
         log.info("Log saved: {}", logEntry);
+    }
+    
+    private String setResult(Object result) {
+        if (result instanceof String) {
+            return (String) result;
+        } else {
+            return Boolean.getBoolean(String.valueOf(result)) ? "ERROR" : "INFO";
+        }
     }
 
     /**
@@ -98,7 +107,7 @@ public class LogService {
                                 log.getHost(),
                                 log.getSource(),
                                 log.getMessage(),
-                                "ERROR".equals(log.getLevel()),
+                                log.getLevel(),
                                 log.getTimestamp()
                         )
                 ).toList();
