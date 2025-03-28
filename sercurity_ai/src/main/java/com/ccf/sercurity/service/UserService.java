@@ -54,6 +54,10 @@ public class UserService {
         }
     }
 
+    public static boolean isAdmin(String userId) {
+        return admin.equals(userId);
+    }
+
     /**
      * HTTP客户端
      */
