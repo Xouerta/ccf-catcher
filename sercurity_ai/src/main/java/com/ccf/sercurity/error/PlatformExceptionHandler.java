@@ -10,6 +10,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,12 @@ import java.util.Map;
 @Slf4j
 @ControllerAdvice
 public class PlatformExceptionHandler {
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResult> handleNoResourceFoundException(NoResourceFoundException e) {
+        log.warn("NoResourceFoundException: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResult(404, e.getMessage()));
+    }
+
     @ExceptionHandler(PlatformException.class)
     public ResponseEntity<ErrorResult> handlePlatformException(PlatformException e) {
         log.warn("PlatformException: {}", e.getMsg());
