@@ -13,4 +13,6 @@ public interface FileRepository extends ElasticsearchRepository<FileInfo, String
 
     @Query("{\"bool\": {\"must\": [{\"match\": {\"uploadFileUserId\": \"?0\"}}]}}")
     Page<FileInfo> searchFileInfoByUploadFileUserId(String userId, Pageable pageable);
+
+    Page<FileInfo> findBy(Pageable pageable);
 }

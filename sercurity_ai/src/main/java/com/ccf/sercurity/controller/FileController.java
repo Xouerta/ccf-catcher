@@ -5,6 +5,7 @@ import com.ccf.sercurity.model.FileInfo;
 import com.ccf.sercurity.service.FileService;
 import com.ccf.sercurity.service.MaliciousDetectionService;
 import com.ccf.sercurity.vo.PageResult;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,9 @@ public class FileController {
         return ResponseEntity.ok(fileInfo);
     }
 
+    @Validated
     @GetMapping(value = "/list")
+    @Operation(description = "分页查询文件列表 查询token个人的上传 如果admin 可以查询全部")
     public ResponseEntity<PageResult<?>> listFiles(
             @RequestHeader("Authorization") @Token String userId,
             @Min(1)

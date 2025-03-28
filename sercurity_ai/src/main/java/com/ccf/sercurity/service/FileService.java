@@ -101,9 +101,15 @@ public class FileService {
 
     public PageResult<FileInfo> listFiles(String userId, Integer page, Integer size) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
-        log.info("用户 {} 查询文件列表成功", userId);
+        Page<FileInfo> pages;
+        if (UserService.isAdmin(userId)) {
+            pages = fileRepository.findBy(pageRequest);
+            log.info("管理员查询文件列表成功");
+        }else {
+            pages = fileRepository.searchFileInfoByUploadFileUserId(userId, pageRequest);
+            log.info("用户 {} 查询文件列表成功", userId);
+        }
 
-        Page<FileInfo> pages = fileRepository.searchFileInfoByUploadFileUserId(userId, pageRequest);
         PageResult<FileInfo> pageResult = new PageResult<>();
         pageResult.setTotal(pages.getTotalElements());
         pageResult.setPage(pages.getNumber() + 1);
