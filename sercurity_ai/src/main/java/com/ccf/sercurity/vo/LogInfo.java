@@ -12,8 +12,8 @@ public record LogInfo(
         String logFileName,
         @Schema(description = "日志信息")
         String message,
-        @Schema(description = "是否为攻击")
-        Boolean isAttack,
+        @Schema(description = "网络错误、 info、 error")
+        String status,
         @Schema(description = "时间戳")
         Date timestamp
 ) {
