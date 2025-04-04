@@ -79,91 +79,102 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import { ref, reactive } from 'vue';
+import { ElMessage } from 'element-plus';
+import apiClient from "@/api/axiosInstance.js";
 
-const passwordForm = ref(null)
+const passwordForm = ref(null);
 const form = reactive({
   email: '',
   code: '',
   newPassword: '',
   confirmPassword: ''
-})
+});
 
 // 验证码发送控制
-const sendCodeDisabled = ref(false)
-const sendCodeText = ref('发送验证码')
-const sendCodeTimer = ref(null)
+const sendCodeDisabled = ref(false);
+const sendCodeText = ref('发送验证码');
+const sendCodeTimer = ref(null);
 
 // 密码强度状态
 const strengthLevel = ref({
   type: 'info',
   message: '请输入新密码'
-})
+});
 
 // 表单验证规则
 const rules = reactive({
   email: [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
-    {
-      type: 'email',
-      message: '请输入正确的邮箱格式',
-      trigger: ['blur', 'change']
-    }
+    { type: 'email', message: '邮箱格式不正确', trigger: ['blur', 'change'] }
   ],
   code: [
     { required: true, message: '请输入验证码', trigger: 'blur' }
   ],
   newPassword: [
-    { required: true, message: '请输入新密码', trigger: 'blur' },
+    {required: true, message: '请输入新密码', trigger: 'blur'},
     {
       validator: (rule, value) => value.length >= 8,
       message: '密码长度至少8位',
       trigger: 'blur'
+    },
+    {
+      async validator(rule, value) {
+        if (!value) return new Error('请输入密码');
+        const res = await apiClient.post('/user/checkPassword', {
+          checkPasswordRequestVO: {password: value}
+        });
+        if (res.data.isWeak) {
+          return new Error('密码属于弱密码，请选择更复杂的密码');
+        }
+      },
+      trigger: 'blur'
     }
   ],
   confirmPassword: [
-    { required: true, message: '请确认新密码', trigger: 'blur' },
+    {required: true, message: '请确认新密码', trigger: 'blur'},
     {
       validator: (rule, value) => value === form.newPassword,
       message: '两次输入的密码不一致',
       trigger: 'blur'
     }
   ]
-})
+});
 
 // 发送验证码
 const sendVerificationCode = async () => {
   if (!form.email) {
-    ElMessage.warning('请输入邮箱')
-    return
+    ElMessage.warning('请输入邮箱');
+    return;
   }
 
   try {
-    // 发送验证码到邮箱（假设存在发送验证码的接口）
-    await axios.post('/api/send-verification-code', {
-      email: form.email
-    })
-    ElMessage.success('验证码已发送，请注意查收')
+    // 调用新验证码接口
+    await apiClient.get('/user/code', {
+      params: {
+        email: form.email,
+        type: false // type参数为布尔值，false表示修改密码场景
+      }
+    });
+    ElMessage.success('验证码已发送，请注意查收');
 
     // 启动倒计时
-    sendCodeDisabled.value = true
-    sendCodeText.value = '60秒后重发'
-    let count = 60
+    sendCodeDisabled.value = true;
+    sendCodeText.value = '60秒后重发';
+    let count = 60;
     sendCodeTimer.value = setInterval(() => {
-      count--
-      sendCodeText.value = `${count}秒后重发`
+      count--;
+      sendCodeText.value = `${count}秒后重发`;
       if (count <= 0) {
-        clearInterval(sendCodeTimer.value)
-        sendCodeDisabled.value = false
-        sendCodeText.value = '发送验证码'
+        clearInterval(sendCodeTimer.value);
+        sendCodeDisabled.value = false;
+        sendCodeText.value = '发送验证码';
       }
-    }, 1000)
+    }, 1000);
   } catch (error) {
-    ElMessage.error('验证码发送失败，请重试')
+    ElMessage.error('验证码发送失败，请重试');
   }
-}
+};
 
 // 密码强度检测
 const checkPasswordStrength = async () => {
@@ -171,56 +182,68 @@ const checkPasswordStrength = async () => {
     strengthLevel.value = {
       type: 'info',
       message: '请输入新密码'
-    }
-    return
+    };
+    return;
   }
 
   try {
-    const res = await axios.post('/api/lookpassword', {
-      password: form.newPassword
-    })
-    const { strength, message } = res.data // 假设接口返回强度信息
+    const res = await apiClient.post('/user/checkPassword', {
+        password: form.newPassword
+    });
+
+    // 安全访问 isWeak 字段，确保数据存在
+    const isWeak = res.data?.isWeak; // 使用可选链
+    if (typeof isWeak !== 'boolean') {
+      throw new Error('接口返回数据格式不正确，缺少 isWeak 字段或类型错误');
+    }
 
     strengthLevel.value = {
-      type: strength === 'weak' ? 'danger'
-          : strength === 'medium' ? 'warning'
-              : 'success',
-      message: message
-    }
+      type: isWeak ? 'danger' : 'success',
+      message: isWeak
+          ? '密码强度不足，属于弱密码'
+          : '密码强度良好'
+    };
   } catch (error) {
+    // 打印详细错误信息
+    console.error('密码强度检测失败:', error);
     strengthLevel.value = {
       type: 'error',
-      message: '密码强度检测失败'
-    }
+      message: '密码强度检测失败，请重试'
+    };
   }
-}
+};
+
 
 // 提交表单
 const submitForm = async (formEl) => {
-  if (!formEl) return
+  if (!formEl) return;
   formEl.validate(async (valid) => {
     if (valid) {
       try {
-        // 调用修改密码接口
-        await axios.post('/user/updatePassword', {
-          email: form.email,
-          newPassword: form.newPassword,
-          code: form.code
-        })
-        ElMessage.success('密码修改成功')
+        // 调用新修改密码接口
+        await apiClient.post('/user/updatePassword', {
+          updatePasswordRequestVO: {
+            email: form.email,
+            newPassword: form.newPassword,
+            code: form.code
+          }
+        });
+        ElMessage.success('密码修改成功');
         // 清空表单
         Object.assign(form, {
           email: '',
           code: '',
           newPassword: '',
           confirmPassword: ''
-        })
+        });
       } catch (error) {
-        ElMessage.error('密码修改失败：' + error.response?.data?.message || '未知错误')
+        ElMessage.error(
+            error.response?.data?.message || '密码修改失败，请检查输入内容'
+        );
       }
     }
-  })
-}
+  });
+};
 </script>
 
 <style scoped>

@@ -9,8 +9,8 @@
             <span class="user-name">用户名称</span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="$router.push({ name: 'PasswordModification' })">修改密码</el-dropdown-item>
-                <el-dropdown-item divided>退出登录</el-dropdown-item>
+                <el-dropdown-item @click="router.push({ name: 'PasswordModification' })">修改密码</el-dropdown-item>
+                <el-dropdown-item divided @click="handlelogout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -59,18 +59,23 @@
 import {createRouter as $router, useRouter} from 'vue-router'
 
 const router = useRouter()
+const handlelogout = () => {
+  localStorage.removeItem('token')
+  router.push({name: 'Login'})
+}
 </script>
 
 <style scoped>
 .layout-container {
   height: 100vh;
+  color: #409eff;
 }
 
 .el-header {
-  background-color: #545c64;
+  background-color: #187fe7;
   color: white;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* 水平两端对齐 */
   align-items: center;
   padding: 0 20px;
 }
@@ -78,14 +83,26 @@ const router = useRouter()
 .header-content {
   display: flex;
   align-items: center;
+  justify-content: space-between; /* 内部水平两端对齐 */
+  width: 100%; /* 占满整个 header 宽度 */
 }
 
 .user-info {
   cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.user-name {
+  margin-right: 10px; /* 用户名与下拉箭头间距 */
+  color: black; /* 字体颜色为黑色 */
+  border: 1px solid #ccc; /* 添加灰色边框 */
+  padding: 5px 10px; /* 边框内填充 */
+  border-radius: 4px; /* 圆角边框 */
 }
 
 .el-aside {
-  background-color: #545c64;
+  background-color: #1978d7;
 }
 
 .el-main {

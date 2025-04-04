@@ -1,19 +1,17 @@
 <template>
-  <!-- 主体内容直接展示，不再包含侧边栏 -->
-  <el-main>
-    <el-row>
-      <!-- 轮播图区域 -->
-      <el-carousel :interval="5000" height="400px" indicator-position="outside">
-        <el-carousel-item v-for="(item, index) in carouselItems" :key="index">
-          <router-link :to="{ name: item.route }">
-            <img :src="item.image" class="carousel-image"  alt="轮播图"/>
-            <div class="carousel-title">{{ item.title }}</div>
-          </router-link>
-        </el-carousel-item>
-      </el-carousel>
-    </el-row>
+  <div class="carousel-container">
+    <el-carousel :interval="5000" height="400px" indicator-position="outside">
+      <el-carousel-item v-for="(item, index) in carouselItems" :key="index">
+        <router-link :to="{ name: item.route }">
+          <img :src="item.image" class="carousel-image" alt="轮播图"/>
+          <div class="carousel-title">{{ item.title }}</div>
+        </router-link>
+      </el-carousel-item>
+    </el-carousel>
+  </div>
 
-    <!-- 实时日志播报 -->
+  <!-- 实时日志播报 -->
+  <div class="log-display-container">
     <el-row class="log-display">
       <el-card shadow="hover">
         <template #header>
@@ -31,7 +29,7 @@
         </el-scrollbar>
       </el-card>
     </el-row>
-  </el-main>
+  </div>
 </template>
 
 <script setup>
@@ -56,7 +54,7 @@ const carouselItems = ref([
   },
   {
     title: '日志检测',
-    image: '/src/assets/log.png',
+    image: '/src/assets/logs.webp',
     route: 'LogMonitoring'
   }
 ])
@@ -80,7 +78,14 @@ onUnmounted(() => clearInterval(logInterval.value))
 </script>
 
 <style scoped>
-/* 保留原有样式，但需调整布局 */
+.carousel-container {
+  width: 100%; /* 确保容器宽度为100% */
+}
+
+.el-carousel {
+  width: 100%; /* 确保轮播图宽度为100% */
+}
+
 .carousel-image {
   width: 100%;
   height: 100%;
@@ -97,8 +102,17 @@ onUnmounted(() => clearInterval(logInterval.value))
   padding: 8px 16px;
 }
 
-.log-display {
+.log-display-container {
+  width: 100%; /* 确保日志展示容器宽度为100% */
   margin-top: 20px;
+}
+
+.log-display {
+  width: 100%; /* 确保日志展示行宽度为100% */
+}
+
+.el-card {
+  width: 100%; /* 确保卡片宽度为100% */
 }
 
 .log-item {

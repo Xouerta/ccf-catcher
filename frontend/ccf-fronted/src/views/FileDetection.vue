@@ -25,9 +25,7 @@
           :percentage="uploadProgress.percent"
           :status="uploadProgress.status"
       />
-      <div class="progress-text">
-        {{ uploadProgress.message }}
-      </div>
+      <div class="progress-text">{{ uploadProgress.message }}</div>
     </div>
 
     <!-- 分析结果 -->
@@ -36,22 +34,22 @@
         <div class="result-header">检测结果</div>
         <div class="result-item">
           <span class="label">文件名：</span>
-          <span class="value">{{ analysisResult.fileName }}</span>
+          <span class="value">{{ analysisResult.originalName }}</span>
         </div>
         <div class="result-item">
           <span class="label">检测状态：</span>
           <span
               class="value"
               :style="{
-              color: analysisResult.status === '恶意文件' ? 'red' : 'green'
+              color: analysisResult.malicious ? 'red' : 'green'
             }"
           >
-            {{ analysisResult.status }}
+            {{ analysisResult.malicious ? '恶意文件' : '安全文件' }}
           </span>
         </div>
         <div class="result-item">
           <span class="label">详细信息：</span>
-          <span class="value">{{ analysisResult.details }}</span>
+          <span class="value">{{ analysisResult.details || '暂无详细信息' }}</span>
         </div>
       </el-card>
     </div>
@@ -59,102 +57,144 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { UploadFilled } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ref } from 'vue';
+import { UploadFilled } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
+import apiClient from '@/api/axiosInstance.js';
 
-const chunkSize = 5 * 1024 * 1024 // 每个分片5MB
+const chunkSize = 5 * 1024 * 1024; // 每个分片5MB
 const uploadProgress = ref({
   show: false,
   percent: 0,
   status: 'success',
   message: ''
-})
-const analysisResult = ref(null)
+});
+const analysisResult = ref(null);
 
 // 文件上传处理
 const handleUpload = async ({ file }) => {
-  const fileId = Date.now().toString() // 生成唯一文件标识
-  const chunks = Math.ceil(file.size / chunkSize)
-  let uploadedChunks = loadUploadedChunks(fileId) || []
+  try {
+    const fileId = Date.now().toString(); // 生成唯一文件标识
+    const chunks = Math.ceil(file.size / chunkSize);
+    let uploadedChunks = loadUploadedChunks(fileId) || [];
 
-  uploadProgress.value = {
-    show: true,
-    percent: (uploadedChunks.length / chunks) * 100,
-    message: `正在上传：${uploadedChunks.length}/${chunks} 块`
-  }
+    uploadProgress.value = {
+      show: true,
+      percent: (uploadedChunks.length / chunks) * 100,
+      message: `正在上传：${uploadedChunks.length}/${chunks} 块`
+    };
 
-  for (let i = 0; i < chunks; i++) {
-    if (uploadedChunks.includes(i)) continue // 已上传的跳过
+    for (let i = 0; i < chunks; i++) {
+      if (uploadedChunks.includes(i)) continue; // 已上传的跳过
 
-    const chunk = file.slice(
-        i * chunkSize,
-        (i + 1) * chunkSize > file.size ? file.size : (i + 1) * chunkSize
-    )
+      const chunk = file.slice(
+          i * chunkSize,
+          Math.min((i + 1) * chunkSize, file.size)
+      );
 
-    try {
-      await uploadChunk(fileId, i, chunk, chunks)
-      uploadedChunks.push(i)
-      saveUploadedChunks(fileId, uploadedChunks)
-      updateProgress(i + 1, chunks)
-    } catch (error) {
-      ElMessage.error('上传失败，请检查网络')
-      return
+      try {
+        await uploadChunk(fileId, i, chunk, chunks);
+        uploadedChunks.push(i);
+        saveUploadedChunks(fileId, uploadedChunks);
+        updateProgress(i + 1, chunks);
+      } catch (error) {
+        throw new Error(`分片 ${i} 上传失败：${error.message}`);
+      }
     }
-  }
 
-  // 模拟分析结果
-  await new Promise(resolve => setTimeout(resolve, 1500))
-  analysisResult.value = {
-    fileName: file.name,
-    status: Math.random() > 0.5 ? '安全文件' : '恶意文件',
-    details: '检测到可疑行为：...（模拟数据）'
+    // 获取文件分析结果
+    const res = await apiClient.get(`/files/${fileId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (!res.data.success) {
+      throw new Error(res.data.message || '检测结果获取失败');
+    }
+
+    analysisResult.value = {
+      ...res.data.data,
+      details: res.data.data.details || '检测完成'
+    };
+    uploadProgress.value.status = 'success';
+  } catch (error) {
+    ElMessage.error(`上传失败：${error.message}`);
+    uploadProgress.value.status = 'exception';
+    uploadProgress.value.message = error.message;
+  } finally {
+    uploadProgress.value.show = true;
   }
-}
+};
 
 // 分片上传
 const uploadChunk = async (fileId, chunkIndex, chunk, totalChunks) => {
-  // 模拟上传请求（替换为真实接口）
-  const formData = new FormData()
-  formData.append('fileId', fileId)
-  formData.append('chunkIndex', chunkIndex)
-  formData.append('chunk', chunk)
-  formData.append('totalChunks', totalChunks)
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('未找到有效 Token，请重新登录');
+  }
 
-  // 这里替换为真实请求：
-  // await axios.post('/api/upload-chunk', formData)
-  return new Promise(resolve => setTimeout(resolve, 500))
-}
+  const formData = new FormData();
+  formData.append('file', chunk);
+  formData.append('fileId', fileId);
+  formData.append('chunkIndex', chunkIndex);
+  formData.append('totalChunks', totalChunks);
+
+  try {
+    const response = await apiClient.post('/files/upload', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || '分片上传失败');
+    }
+  } catch (error) {
+    console.error('分片上传失败:', error);
+    throw error;
+  }
+};
 
 // 更新进度条
 const updateProgress = (currentChunk, totalChunks) => {
-  uploadProgress.value.percent = (currentChunk / totalChunks) * 100
-  uploadProgress.value.message = `正在上传：${currentChunk}/${totalChunks} 块`
-}
+  uploadProgress.value.percent = (currentChunk / totalChunks) * 100;
+  uploadProgress.value.message = `正在上传：${currentChunk}/${totalChunks} 块`;
+};
 
 // 保存已上传分片
 const saveUploadedChunks = (fileId, chunks) => {
-  localStorage.setItem(fileId, JSON.stringify(chunks))
-}
+  try {
+    localStorage.setItem(fileId, JSON.stringify(chunks));
+  } catch (error) {
+    console.error('存储分片状态失败:', error);
+  }
+};
 
 // 加载已上传分片
 const loadUploadedChunks = (fileId) => {
-  const stored = localStorage.getItem(fileId)
-  return stored ? JSON.parse(stored) : []
-}
+  try {
+    const stored = localStorage.getItem(fileId);
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error('加载分片状态失败:', error);
+    return [];
+  }
+};
 
 // 上传前验证
 const beforeUpload = (file) => {
-  const isLt2G = file.size / 1024 / 1024 / 1024 < 2
+  const isLt2G = file.size / 1024 / 1024 / 1024 < 2;
   if (!isLt2G) {
-    ElMessage.warning('文件大小不能超过 2GB!')
-    return false
+    ElMessage.warning('文件大小不能超过 2GB!');
+    return false;
   }
-  return true
-}
+  return true;
+};
 </script>
 
 <style scoped>
+/* 保持原有样式不变 */
 .file-detection-card {
   margin: 20px;
   padding: 20px;
