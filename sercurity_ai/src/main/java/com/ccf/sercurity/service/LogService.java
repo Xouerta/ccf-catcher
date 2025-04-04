@@ -152,13 +152,14 @@ public class LogService {
 
     @EventListener(ContextRefreshedEvent.class)
     public void handleContextRefreshed() {
-//        restTemplate.getForObject()
-        log.info(logConfig.getStartUrl());
+        restTemplate.getForEntity(logConfig.getStartUrl(), Object.class);
+        log.info("开启log {}", logConfig.getStartUrl());
     }
 
     @EventListener(ContextClosedEvent.class)
     public void handleContextClosed() {
         // 上下文关闭事件处理
-        log.info("Context closed event received.");
+        restTemplate.getForEntity(logConfig.getEndUrl(), Object.class);
+        log.info("关闭log {}", logConfig.getEndUrl());
     }
 }
