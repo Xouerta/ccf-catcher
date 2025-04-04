@@ -9,18 +9,50 @@ from kafka import KafkaProducer
 
 app = Flask(__name__)
 
-# Kafka配置（优先使用环境变量）
+# Kafka配置
 KAFKA_TOPIC = os.environ.get('KAFKA_TOPIC', 'network_predictions')
-KAFKA_BOOTSTRAP = os.environ.get('KAFKA_BOOTSTRAP', '100.118.110.15:9092')  # 修改为本地测试
+KAFKA_BOOTSTRAP = os.environ.get('KAFKA_BOOTSTRAP', '100.118.110.15:9092')
 producer = KafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP)
 
 MODEL_PATH = "E:/ccf-catcher/model/best_model_hgb_202503191724.joblib"
 model = joblib.load(MODEL_PATH)
 
+# 特征列（确保与 CSV 完全一致，包括前导空格）
+feature_columns = [
+    ' Destination Port', ' Flow Duration', ' Total Fwd Packets', ' Total Backward Packets',
+    'Total Length of Fwd Packets', ' Total Length of Bwd Packets', ' Fwd Packet Length Max',
+    ' Fwd Packet Length Min', ' Fwd Packet Length Mean', ' Fwd Packet Length Std',
+    'Bwd Packet Length Max', ' Bwd Packet Length Min', ' Bwd Packet Length Mean',
+    ' Bwd Packet Length Std', 'Flow Bytes/s', ' Flow Packets/s', ' Flow IAT Mean',
+    ' Flow IAT Std', ' Flow IAT Max', ' Flow IAT Min', 'Fwd IAT Total', ' Fwd IAT Mean',
+    ' Fwd IAT Std', ' Fwd IAT Max', ' Fwd IAT Min', 'Bwd IAT Total', ' Bwd IAT Mean',
+    ' Bwd IAT Std', ' Bwd IAT Max', ' Bwd IAT Min', 'Fwd PSH Flags', ' Bwd PSH Flags',
+    ' Fwd URG Flags', ' Bwd URG Flags', ' Fwd Header Length', ' Bwd Header Length',
+    'Fwd Packets/s', ' Bwd Packets/s', ' Min Packet Length', ' Max Packet Length',
+    ' Packet Length Mean', ' Packet Length Std', ' Packet Length Variance',
+    'FIN Flag Count', ' SYN Flag Count', ' RST Flag Count', ' PSH Flag Count',
+    ' ACK Flag Count', ' URG Flag Count', ' CWE Flag Count', ' ECE Flag Count',
+    ' Down/Up Ratio', ' Average Packet Size', ' Avg Fwd Segment Size',
+    ' Avg Bwd Segment Size', ' Fwd Header Length.1', 'Fwd Avg Bytes/Bulk',
+    ' Fwd Avg Packets/Bulk', ' Fwd Avg Bulk Rate', ' Bwd Avg Bytes/Bulk',
+    ' Bwd Avg Packets/Bulk', 'Bwd Avg Bulk Rate', 'Subflow Fwd Packets',
+    ' Subflow Fwd Bytes', ' Subflow Bwd Packets', ' Subflow Bwd Bytes',
+    'Init_Win_bytes_forward', ' Init_Win_bytes_backward', ' act_data_pkt_fwd',
+    ' min_seg_size_forward', 'Active Mean', ' Active Std', ' Active Max',
+    ' Active Min', 'Idle Mean', ' Idle Std', ' Idle Max', ' Idle Min'
+]
+
 
 def process_data(df):
     try:
-        features = df[['len', 'source_port', 'dest_port']].astype(float)
+        # 过滤 feature_columns 中的列
+        df = df[feature_columns]
+
+        # 转换为数值类型并删除无效行
+        df = df.apply(pd.to_numeric, errors='coerce').dropna()
+
+        # 转换为数值数组（移除列名）
+        features = df.values.astype(float)
         predictions = model.predict(features)
 
         for idx, row in df.iterrows():
@@ -33,12 +65,21 @@ def process_data(df):
             }).encode('utf-8'))
     except Exception as e:
         print(f"处理数据失败: {str(e)}")
+        print("当前列值:", df.columns.tolist())
+        print("特征列数据类型:", df.dtypes)
 
 
 def process_output_csv():
-    csv_path = os.path.join('proceed_files', 'output.csv')
+    csv_path = os.path.join('../proceed_files', 'output.csv')
     if os.path.exists(csv_path):
         df = pd.read_csv(csv_path)
+
+        # 显式删除 Label 列（可能列名是 ' Label' 或 'Label'）
+        df = df.drop(columns=[' Label', 'Label'], errors='ignore')
+
+        # 过滤 feature_columns 中的列
+        df = df[feature_columns]
+
         process_data(df)
     else:
         print("output.csv 文件不存在")
@@ -49,7 +90,19 @@ def predict():
     try:
         data = request.get_json()
         df = pd.DataFrame([data])
-        prediction = model.predict(df)[0]
+
+        # 删除 Label 列
+        df = df.drop(columns=[' Label', 'Label'], errors='ignore')
+
+        # 过滤 feature_columns 中的列
+        df = df[feature_columns]
+
+        # 转换为数值类型并删除无效行
+        df = df.apply(pd.to_numeric, errors='coerce').dropna()
+
+        # 转换为数值数组
+        features = df.values.astype(float)
+        prediction = model.predict(features)[0]
 
         producer.send(KAFKA_TOPIC, value=json.dumps({
             "input": data,
