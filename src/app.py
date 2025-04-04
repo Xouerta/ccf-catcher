@@ -45,13 +45,10 @@ feature_columns = [
 
 def process_data(df):
     try:
-        # 过滤 feature_columns 中的列
-        df = df[feature_columns]
-
-        # 转换为数值类型并删除无效行
+        # 确保所有列均为数值类型
         df = df.apply(pd.to_numeric, errors='coerce').dropna()
 
-        # 转换为数值数组（移除列名）
+        # 移除列名，仅传入数值数组（避免模型因列名不匹配报错）
         features = df.values.astype(float)
         predictions = model.predict(features)
 
@@ -73,12 +70,22 @@ def process_output_csv():
     csv_path = os.path.join('../proceed_files', 'output.csv')
     if os.path.exists(csv_path):
         df = pd.read_csv(csv_path)
+        print("output.csv 列名:", df.columns.tolist())
 
-        # 显式删除 Label 列（可能列名是 ' Label' 或 'Label'）
-        df = df.drop(columns=[' Label', 'Label'], errors='ignore')
+        # 删除最后一列（标签列）
+        df = df.iloc[:, :-1]
 
-        # 过滤 feature_columns 中的列
-        df = df[feature_columns]
+        # 验证列名匹配
+        expected_columns = set(feature_columns)
+        actual_columns = set(df.columns.tolist())
+        missing_columns = expected_columns - actual_columns
+        extra_columns = actual_columns - expected_columns
+
+        print("缺失的列名:", missing_columns)
+        print("多余的列名:", extra_columns)
+
+        # 过滤非数值列并转换为数值类型
+        df = df.apply(pd.to_numeric, errors='coerce').dropna()
 
         process_data(df)
     else:
@@ -91,16 +98,13 @@ def predict():
         data = request.get_json()
         df = pd.DataFrame([data])
 
-        # 删除 Label 列
-        df = df.drop(columns=[' Label', 'Label'], errors='ignore')
-
-        # 过滤 feature_columns 中的列
+        # 过滤非数值列并严格匹配 feature_columns
         df = df[feature_columns]
 
-        # 转换为数值类型并删除无效行
+        # 转换为数值类型并处理非数值数据
         df = df.apply(pd.to_numeric, errors='coerce').dropna()
 
-        # 转换为数值数组
+        # 移除列名，仅传入数值数组
         features = df.values.astype(float)
         prediction = model.predict(features)[0]
 
