@@ -8,14 +8,20 @@
 
     <!-- 数据表格 -->
     <el-table
-        :data="currentPageData"
+        :data="tableData"
         border
         style="width: 100%"
         max-height="500px"
     >
-      <el-table-column prop="sourceIp" label="源IP" width="180" />
-      <el-table-column prop="destinationIp" label="目的IP" width="180" />
-      <el-table-column prop="attackType" label="攻击类型" />
+      <!-- 新增的四个字段 -->
+      <el-table-column prop="id" label="ID" width="120" />
+      <el-table-column prop="timestamp" label="时间戳" width="220">
+        <template #default="scope">
+          {{ new Date(scope.row.timestamp).toLocaleString() }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="result" label="结果" />
+      <el-table-column prop="FlowDuration" label="流量持续时间" width="150" />
     </el-table>
 
     <!-- 分页组件 -->
@@ -33,46 +39,53 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import apiClient from "@/api/axiosInstance.js";
 
-// 模拟数据（替换为真实接口）
-const mockData = Array.from({ length: 100 }, (_, index) => ({
-  id: index + 1,
-  sourceIp: `192.168.1.${Math.floor(Math.random() * 255)}`,
-  destinationIp: `10.0.0.${Math.floor(Math.random() * 255)}`,
-  attackType: ['DDoS', 'SQL注入', 'XSS攻击', '端口扫描'][Math.floor(Math.random() * 4)]
-}))
+// 接口返回数据
+const tableData = ref([])
+const total = ref(0)
 
 // 分页状态
 const currentPage = ref(1)
 const pageSize = ref(10)
-const total = ref(mockData.length)
 
-// 当前页数据计算属性
-const currentPageData = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return mockData.slice(start, end)
-})
+// 数据加载方法
+const loadData = async () => {
+  try {
+    const response = await apiClient.get('/traffic/list', {
+      params: {
+        page: currentPage.value, // 接口要求从 0 开始，因此减 1
+        size: pageSize.value
+      },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}` // 根据实际token存储方式修改
+      }
+    })
+
+    // 处理响应数据
+    tableData.value = response.data.list
+    total.value = response.data.total
+  } catch (error) {
+    console.error('数据加载失败:', error)
+  }
+}
 
 // 分页事件处理
 const handleSizeChange = (size) => {
   pageSize.value = size
-  currentPage.value = 1 // 切换每页数量时重置到第一页
+  currentPage.value = 1
+  loadData()
 }
 
 const handleCurrentChange = (page) => {
   currentPage.value = page
+  loadData()
 }
 
-// 模拟数据加载（替换为真实接口）
+// 组件挂载时加载数据
 onMounted(() => {
-  // 模拟异步加载数据
-  // 实际开发中应替换为：
-  // axios.get('/api/abnormal-traffic').then(res => {
-  //   mockData = res.data.list
-  //   total.value = res.data.total
-  // })
+  loadData()
 })
 </script>
 
