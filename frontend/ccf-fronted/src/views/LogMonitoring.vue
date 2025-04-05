@@ -40,7 +40,7 @@
       <el-table-column prop="status" label="状态" width="120">
         <template #default="scope">
           <el-tag
-              :type="scope.row.status === 'error' ? 'danger' : 'success'"
+              :type="getStatusType(scope.row.status)"
               effect="dark"
           >
             {{ scope.row.status }}
@@ -63,13 +63,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
-import axios from 'axios';
-import { Loading } from '@element-plus/icons-vue';
 import apiClient from "@/api/axiosInstance.js";
+import { Loading } from '@element-plus/icons-vue';
 
 const logs = ref([]);
 const total = ref(0);
-const currentPage = ref(0);
+const currentPage = ref(1); // 0-based页码
 const pageSize = ref(10);
 const loading = ref(false);
 
@@ -79,13 +78,25 @@ const formatDate = (timestampStr) => {
   return date.toLocaleString(); // 根据需求调整格式
 };
 
+// 状态标签类型映射
+const getStatusType = (status) => {
+  switch (status) {
+    case 'error':
+      return 'danger';
+    case 'info':
+      return 'info';
+    default:
+      return 'success';
+  }
+};
+
 // 获取日志数据
 const fetchLogs = async () => {
   loading.value = true;
   try {
     const params = {
-      page: currentPage.value,
-      size: pageSize.value
+      page: Number(currentPage.value),
+      size: Number(pageSize.value)
     };
     const config = {
       headers: {
@@ -93,11 +104,18 @@ const fetchLogs = async () => {
       }
     };
 
-    const res = await apiClient().get('/logs/list', { params, ...config });
-    logs.value = res.data.list;
-    total.value = res.data.total;
+    const res = await apiClient.get('/logs/list', { params, ...config });
+
+    // 根据接口文档适配响应数据
+    if (res.data && res.data.list) {
+      logs.value = res.data.list;
+      total.value = res.data.total || 0;
+    } else {
+      throw new Error('无效的响应数据格式');
+    }
   } catch (error) {
     ElMessage.error('加载日志失败，请检查网络或权限');
+    console.error('日志加载失败:', error); // 添加错误日志
   } finally {
     loading.value = false;
   }
@@ -105,7 +123,7 @@ const fetchLogs = async () => {
 
 // 分页切换处理
 const handlePageChange = (newPage) => {
-  currentPage.value = newPage - 1; // 转换为0-based页码
+  currentPage.value = newPage; // 转换为1-based页码
   fetchLogs();
 };
 
