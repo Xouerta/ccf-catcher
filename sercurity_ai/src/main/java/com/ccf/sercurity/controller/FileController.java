@@ -63,6 +63,7 @@ public class FileController {
             @RequestHeader("Authorization") @Token String userId,
             @Min(1)
             @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @Min(10)
             @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
         return ResponseEntity.ok(fileService.listFiles(userId, page, size));
