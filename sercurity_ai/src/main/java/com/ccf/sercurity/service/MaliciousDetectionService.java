@@ -95,14 +95,12 @@ public class MaliciousDetectionService {
             } else {
                 // 日志记录检测失败
                 log.error("恶意文件检测失败: {}", responseBody.get("message"));
-                System.err.println("恶意文件检测失败: " + responseBody.get("message"));
             }
 
             return isMalicious;
         } catch (Exception e) {
             // 日志记录异常
             log.error("恶意文件检测失败: {}", e.getMessage());
-            System.err.println("恶意文件检测失败: " + e.getMessage());
             return false;
         }
     }
