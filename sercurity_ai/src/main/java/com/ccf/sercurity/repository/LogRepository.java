@@ -12,4 +12,10 @@ public interface LogRepository extends ElasticsearchRepository<LogRecord, String
     List<LogRecord> findByLevelAndTimestampBetween(String level, Date startDate, Date endDate);
 
     Page<LogRecord> findBy(Pageable pageable);
+
+    Page<LogRecord> findByLevel(String level, Pageable pageable);
+
+    Page<LogRecord> findByHost(String host, Pageable pageable);
+
+    Page<LogRecord> findByLevelAndHost(String level, String host, Pageable pageable);
 }

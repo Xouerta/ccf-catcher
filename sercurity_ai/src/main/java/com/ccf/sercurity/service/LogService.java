@@ -23,6 +23,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,8 +79,8 @@ public class LogService {
         assert result != null;
 
         return switch (result.toString()) {
-            case "true" -> "ERROR";
-            case "false" -> "INFO";
+            case "true" -> "error";
+            case "false" -> "info";
             default -> "network_error";
         };
     }
@@ -96,11 +97,28 @@ public class LogService {
         return logRepository.findByLevelAndTimestampBetween(level, startDate, endDate);
     }
 
-    public PageResult<LogInfo> listLogs(String userId, @Min(1) Integer page, Integer size) {
+    /**
+     * @param userId 用户id
+     * @param page   页
+     * @param size   大小
+     * @param status 状态
+     * @param host   主机名
+     * @return 分页结果
+     */
+    public PageResult<LogInfo> listLogs(String userId, @Min(1) Integer page, Integer size, String status, String host) {
         PageRequest pageRequest = PageRequest.of(page - 1, size);
-        log.info("用户 {} 请求查看日志", userId);
+        log.info("用户 {} 请求查看日志 page: {} size: {} status: {} host: {}", userId, page, size, status, host);
+        Page<LogRecord> pages;
 
-        Page<LogRecord> pages = logRepository.findBy(pageRequest);
+        if (status != null && host != null) {
+            pages = logRepository.findByLevelAndHost(status.toLowerCase(Locale.ROOT), host, pageRequest);
+        } else if (status != null) {
+            pages = logRepository.findByLevel(status.toLowerCase(Locale.ROOT), pageRequest);
+        } else if (host != null) {
+            pages = logRepository.findByHost(host, pageRequest);
+        } else {
+            pages = logRepository.findBy(pageRequest);
+        }
 
         List<LogInfo> list = pages.getContent()
                 .stream().map(
