@@ -2,10 +2,13 @@ package com.ccf.sercurity.service;
 
 import com.ccf.sercurity.model.TrafficData;
 import com.ccf.sercurity.repository.TrafficRepository;
+import com.ccf.sercurity.vo.PageResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -48,4 +51,17 @@ public class TrafficAnalysisService {
     }
 
 
-} 
+    public PageResult<TrafficData> listTraffic(String userId, Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        log.info("用户 {} 请求查看流量", userId);
+
+        Page<TrafficData> pages = trafficRepository.findBy(pageRequest);
+
+        PageResult<TrafficData> pageResult = new PageResult<>();
+        pageResult.setTotal(pages.getTotalElements());
+        pageResult.setPage(pages.getNumber() + 1);
+        pageResult.setSize(pages.getSize());
+        pageResult.setList(pages.getContent());
+        return pageResult;
+    }
+}
