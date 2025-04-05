@@ -73,13 +73,15 @@ public class LogService {
         this.logRepository.save(logEntry);
         log.info("Log saved: {}", logEntry);
     }
-    
+
     private String setResult(Object result) {
-        if (result instanceof String) {
-            return (String) result;
-        } else {
-            return Boolean.getBoolean(String.valueOf(result)) ? "ERROR" : "INFO";
-        }
+        assert result != null;
+
+        return switch (result.toString()) {
+            case "true" -> "ERROR";
+            case "false" -> "INFO";
+            default -> "network_error";
+        };
     }
 
     /**

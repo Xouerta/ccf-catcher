@@ -12,7 +12,7 @@ public record LogInfo(
         String logFileName,
         @Schema(description = "日志信息")
         String message,
-        @Schema(description = "网络错误、 info、 error")
+        @Schema(description = "network_error (连不上deepseek)、 info、 error")
         String status,
         @Schema(description = "时间戳")
         Date timestamp
