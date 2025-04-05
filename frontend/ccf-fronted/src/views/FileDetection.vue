@@ -13,7 +13,6 @@
         :http-request="handleUpload"
         :before-upload="beforeUpload"
         :show-file-list="false"
-        multiple
     >
       <el-icon class="upload-icon"><upload-filled /></el-icon>
       <div class="upload-text">拖拽文件至此或点击选择</div>
@@ -53,16 +52,38 @@
         </div>
       </el-card>
     </div>
+
+    <!-- 文件列表 -->
+    <el-table :data="files" class="file-list-table" v-if="files.length">
+      <el-table-column prop="originalName" label="文件名" width="300"/>
+      <el-table-column prop="uploadTime" label="上传时间" />
+      <el-table-column prop="status" label="状态">
+        <template #default="scope">
+          <span :style="{ color: scope.row.malicious ? 'red' : 'green' }">
+            {{ scope.row.malicious ? '恶意文件' : '安全文件' }}
+          </span>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- 分页控件 -->
+    <el-pagination
+        class="pagination"
+        layout="prev, pager, next, jumper"
+        :total="total"
+        :page-size="pageSize"
+        :current-page="currentPage"
+        @current-change="handlePageChange"
+    />
   </el-card>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { UploadFilled } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElTable, ElPagination } from 'element-plus';
 import apiClient from '@/api/axiosInstance.js';
 
-const chunkSize = 5 * 1024 * 1024; // 每个分片5MB
 const uploadProgress = ref({
   show: false,
   percent: 0,
@@ -71,41 +92,88 @@ const uploadProgress = ref({
 });
 const analysisResult = ref(null);
 
+// 文件列表相关状态
+const files = ref([]);
+const total = ref(0);
+const currentPage = ref(1);
+const pageSize = ref(10);
+
+// 文件列表获取方法
+const fetchFiles = async () => {
+  try {
+    const res = await apiClient.get('/files/list', {
+      params: {
+        page: currentPage.value,
+        size: pageSize.value
+      },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (res.data.success) {
+      files.value = res.data.list;
+      total.value = res.data.total;
+    } else {
+      ElMessage.error(res.data.message || '获取文件列表失败');
+    }
+  } catch (error) {
+    ElMessage.error(`接口调用失败：${error.message}`);
+  }
+};
+
+// 分页变化处理
+const handlePageChange = (page) => {
+  currentPage.value = page;
+  fetchFiles();
+};
+
+// 文件上传处理
 // 文件上传处理
 const handleUpload = async ({ file }) => {
   try {
-    const fileId = Date.now().toString(); // 生成唯一文件标识
-    const chunks = Math.ceil(file.size / chunkSize);
-    let uploadedChunks = loadUploadedChunks(fileId) || [];
-
-    uploadProgress.value = {
-      show: true,
-      percent: (uploadedChunks.length / chunks) * 100,
-      message: `正在上传：${uploadedChunks.length}/${chunks} 块`
-    };
-
-    for (let i = 0; i < chunks; i++) {
-      if (uploadedChunks.includes(i)) continue; // 已上传的跳过
-
-      const chunk = file.slice(
-          i * chunkSize,
-          Math.min((i + 1) * chunkSize, file.size)
-      );
-
-      try {
-        await uploadChunk(fileId, i, chunk, chunks);
-        uploadedChunks.push(i);
-        saveUploadedChunks(fileId, uploadedChunks);
-        updateProgress(i + 1, chunks);
-      } catch (error) {
-        throw new Error(`分片 ${i} 上传失败：${error.message}`);
-      }
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('未找到有效 Token，请重新登录');
     }
 
-    // 获取文件分析结果
+    const formData = new FormData();
+    formData.append('file', file);
+    const queryParams = `?file=${encodeURIComponent(file.name)}`;
+
+    uploadProgress.value.show = true;
+    uploadProgress.value.message = '正在上传文件...';
+
+    const response = await apiClient.post(
+        `/files/upload${queryParams}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          },
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+            uploadProgress.value.percent = percent;
+            uploadProgress.value.message = `上传进度：${percent}%`;
+          }
+        }
+    );
+
+    // 新增：检查 HTTP 状态码
+    if (response.status !== 200) {
+      throw new Error(`HTTP 错误: ${response.status}`);
+    }
+
+    // 新增：检查业务逻辑 success 字段
+    if (!response.data.success) {
+      throw new Error(response.data.message || '文件上传失败');
+    }
+
+    const fileId = response.data.data.id;
     const res = await apiClient.get(`/files/${fileId}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
+        Authorization: `Bearer ${token}`
       }
     });
 
@@ -118,67 +186,13 @@ const handleUpload = async ({ file }) => {
       details: res.data.data.details || '检测完成'
     };
     uploadProgress.value.status = 'success';
+    uploadProgress.value.message = '上传完成';
   } catch (error) {
     ElMessage.error(`上传失败：${error.message}`);
     uploadProgress.value.status = 'exception';
     uploadProgress.value.message = error.message;
   } finally {
     uploadProgress.value.show = true;
-  }
-};
-
-// 分片上传
-const uploadChunk = async (fileId, chunkIndex, chunk, totalChunks) => {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    throw new Error('未找到有效 Token，请重新登录');
-  }
-
-  const formData = new FormData();
-  formData.append('file', chunk);
-  formData.append('fileId', fileId);
-  formData.append('chunkIndex', chunkIndex);
-  formData.append('totalChunks', totalChunks);
-
-  try {
-    const response = await apiClient.post('/files/upload', formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.data.success) {
-      throw new Error(response.data.message || '分片上传失败');
-    }
-  } catch (error) {
-    console.error('分片上传失败:', error);
-    throw error;
-  }
-};
-
-// 更新进度条
-const updateProgress = (currentChunk, totalChunks) => {
-  uploadProgress.value.percent = (currentChunk / totalChunks) * 100;
-  uploadProgress.value.message = `正在上传：${currentChunk}/${totalChunks} 块`;
-};
-
-// 保存已上传分片
-const saveUploadedChunks = (fileId, chunks) => {
-  try {
-    localStorage.setItem(fileId, JSON.stringify(chunks));
-  } catch (error) {
-    console.error('存储分片状态失败:', error);
-  }
-};
-
-// 加载已上传分片
-const loadUploadedChunks = (fileId) => {
-  try {
-    const stored = localStorage.getItem(fileId);
-    return stored ? JSON.parse(stored) : [];
-  } catch (error) {
-    console.error('加载分片状态失败:', error);
-    return [];
   }
 };
 
@@ -191,10 +205,14 @@ const beforeUpload = (file) => {
   }
   return true;
 };
+
+// 页面加载时初始化数据
+onMounted(() => {
+  fetchFiles();
+});
 </script>
 
 <style scoped>
-/* 保持原有样式不变 */
 .file-detection-card {
   margin: 20px;
   padding: 20px;
@@ -251,5 +269,14 @@ const beforeUpload = (file) => {
 
 .value {
   vertical-align: top;
+}
+
+.file-list-table {
+  margin: 20px 0;
+}
+
+.pagination {
+  text-align: right;
+  margin-top: 20px;
 }
 </style>
