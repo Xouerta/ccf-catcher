@@ -59,15 +59,15 @@ const router = createRouter({
   scrollBehavior() { return { top: 0 }; }
 })
 
-// router.beforeEach((to, from, next) => {
-//   const token = localStorage.getItem('token')
-//   if (to.meta.requiresAuth && !token) {
-//     next({ name: 'Login' })
-//   } else if (to.name === 'Login' && token) {
-//     next({ name: 'Home' })
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  if (to.meta.requiresAuth && !token) {
+    next({ name: 'Login' })
+  } else if (to.name === 'Login' && token) {
+    next({ name: 'Home' })
+  } else {
+    next()
+  }
+})
 
 export default router

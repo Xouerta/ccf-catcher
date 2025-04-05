@@ -3,7 +3,7 @@
     <!-- 顶部导航栏 -->
     <el-header height="60px">
       <div class="header-content">
-        <h3>流量分析管理平台</h3>
+        <h3>智能网络活动综合分析管理平台</h3>
         <div class="user-info">
           <el-dropdown trigger="click">
             <span class="user-name">用户名称</span>
@@ -56,13 +56,13 @@
 </template>
 
 <script setup>
-import {createRouter as $router, useRouter} from 'vue-router'
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
+const router = useRouter();
 const handlelogout = () => {
-  localStorage.removeItem('token')
-  router.push({name: 'Login'})
-}
+  localStorage.removeItem('token');
+  router.push({ name: 'Login' });
+};
 </script>
 
 <style scoped>
@@ -71,20 +71,35 @@ const handlelogout = () => {
   color: #409eff;
 }
 
+/* 顶部导航栏 */
 .el-header {
-  background-color: #187fe7;
+  background: linear-gradient(90deg, #187fe7, #1e90ff);
+  background-size: 200% 100%;
+  animation: gradientAnimation 4s ease infinite;
   color: white;
   display: flex;
-  justify-content: space-between; /* 水平两端对齐 */
+  justify-content: space-between;
   align-items: center;
   padding: 0 20px;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .header-content {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* 内部水平两端对齐 */
-  width: 100%; /* 占满整个 header 宽度 */
+  justify-content: space-between;
+  width: 100%;
 }
 
 .user-info {
@@ -94,15 +109,30 @@ const handlelogout = () => {
 }
 
 .user-name {
-  margin-right: 10px; /* 用户名与下拉箭头间距 */
-  color: black; /* 字体颜色为黑色 */
-  border: 1px solid #ccc; /* 添加灰色边框 */
-  padding: 5px 10px; /* 边框内填充 */
-  border-radius: 4px; /* 圆角边框 */
+  margin-right: 10px;
+  color: black;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 4px;
 }
 
-.el-aside {
-  background-color: #1978d7;
+/* 左侧导航栏 */
+:deep(.el-aside) {
+  background: linear-gradient(180deg, #1978d7, #4169e1);
+  background-size: 100% 200%;
+  animation: asideGradientAnimation 4s ease infinite;
+}
+
+@keyframes asideGradientAnimation {
+  0% {
+    background-position: 50% 0%;
+  }
+  50% {
+    background-position: 50% 100%;
+  }
+  100% {
+    background-position: 50% 0%;
+  }
 }
 
 .el-main {

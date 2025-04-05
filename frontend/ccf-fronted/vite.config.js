@@ -26,6 +26,11 @@ export default defineConfig({
         changeOrigin: true,
 
       },
+      '/traffic': {
+        target: 'http://100.118.110.15:8080',
+        changeOrigin: true,
+
+      },
     },
   },
   resolve: {

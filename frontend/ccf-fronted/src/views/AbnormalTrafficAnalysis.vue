@@ -55,7 +55,7 @@ const loadData = async () => {
   try {
     const response = await apiClient.get('/traffic/list', {
       params: {
-        page: currentPage.value, // 接口要求从 0 开始，因此减 1
+        page: currentPage.value,
         size: pageSize.value
       },
       headers: {
