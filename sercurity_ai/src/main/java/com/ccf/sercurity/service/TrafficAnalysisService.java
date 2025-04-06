@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -52,7 +53,9 @@ public class TrafficAnalysisService {
 
 
     public PageResult<TrafficData> listTraffic(String userId, Integer page, Integer size) {
-        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        Sort sort = Sort.by(Sort.Direction.DESC, "timestamp");
+        PageRequest pageRequest = PageRequest.of(page - 1, size, sort);
+
         log.info("用户 {} 请求查看流量", userId);
 
         Page<TrafficData> pages = trafficRepository.findBy(pageRequest);
