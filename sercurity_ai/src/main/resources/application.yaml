@@ -5,17 +5,17 @@ spring:
   application:
     name: sercurity_ai
   elasticsearch:
-    uris: http://192.168.1.7:9200
+    uris: http://localhost:9200
     username: elastic
     password: Secur3P@ssw0rd
   kafka:
     consumer:
-      bootstrap-servers: 192.168.1.7:9092
+      bootstrap-servers: localhost:9092
       auto-offset-reset: earliest
       group-id: security
   data:
     redis:
-      host: 192.168.1.7
+      host: localhost
   mail:
     host: smtp.163.com
     username: 15524737150@163.com
@@ -36,7 +36,7 @@ spring:
 
 kangaroohy:
   minio:
-    endpoint: http://192.168.1.7:9000
+    endpoint: http://localhost:9000
     access-key: admin
     secret-key: 12345678
 
@@ -62,9 +62,17 @@ admin:
   password: aA112233
 password:
   api:
-    url: http://192.168.1.7:5500/predict
+    url: http://localhost:5500/predict
 log:
   api:
-    url: http://192.168.1.7:5000
-    start: /start
-    end: /end
+    url: http://localhost:6500
+    start: /start_monitoring
+    end: /stop_monitoring
+deepstudylog:
+  api:
+    url: http://localhost:5000
+    process-log: /process_logs
+    evaluate: /evaluate
+
+
+
