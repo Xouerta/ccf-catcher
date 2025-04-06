@@ -42,6 +42,12 @@ const routes = [
         name: 'LogMonitoring',
         component: () => import('@/views/LogMonitoring.vue'),
         meta: { title: '日志检测' }
+      },
+      {
+        path: 'ai-log',
+        name: 'AIlog',
+        component: () => import('@/views/AILog.vue'),
+        meta: { title: 'AI日志检测' }
       }
     ]
   },

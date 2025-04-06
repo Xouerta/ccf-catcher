@@ -96,10 +96,10 @@ const chartRef4 = ref(null); // 第四个图表容器的引用
 
 // 准确率数据（满分是100）
 const chartData = ref([
-  {name: '异常流量判断率', value: 99.87},
-  {name: '文件上传判断率', value: 99.51},
-  {name: '密码强弱判断准确率', value: 98.97},
-  {name: '日志准确度', value: 98.97},
+  {name: '异常流量判断率', value: 99.67},
+  {name: '文件上传判断率', value: 99.01},
+  {name: '密码强弱判断准确率', value: 95.97},
+  {name: '日志准确度', value: 87.97},
 ]);
 
 onMounted(() => {
@@ -128,7 +128,7 @@ onMounted(() => {
     series: [
       {
         name: item.name,
-        type: 'pie',
+        type:'pie',
         radius: ['50%', '70%'], // 设置为环形图
         center: ['50%', '60%'], // 调整图表中心位置
         avoidLabelOverlap: false,
