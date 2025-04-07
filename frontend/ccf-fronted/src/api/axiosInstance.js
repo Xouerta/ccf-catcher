@@ -22,7 +22,7 @@ apiClient.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                // 调用刷新 Token 的接口（示例）
+                // 调用刷新 Token 的接口
                 const newToken = await axios.post('/auth/refresh', {
                     refreshToken: localStorage.getItem('refreshToken'),
                 });

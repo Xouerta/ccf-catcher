@@ -106,12 +106,12 @@
   </el-card>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
+<script setup>import { ref, onMounted } from 'vue';
 import { UploadFilled } from '@element-plus/icons-vue';
 import { ElMessage, ElTable, ElPagination } from 'element-plus';
 import apiClient from '@/api/axiosInstance.js';
 
+// 上传进度状态
 const uploadProgress = ref({
   show: false,
   percent: 0,
@@ -119,7 +119,7 @@ const uploadProgress = ref({
   message: ''
 });
 
-// 初始化 analysisResult 为一个对象
+// 分析结果
 const analysisResult = ref({
   id: '',
   uploadFileUserId: '',
@@ -141,7 +141,7 @@ const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
 
-// 文件列表获取方法
+// 获取文件列表
 const fetchFiles = async () => {
   try {
     const res = await apiClient.get('/files/list', {
@@ -191,7 +191,7 @@ const handleUpload = async ({ file }) => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data' // Axios 会自动设置 multipart/form-data
+            'Content-Type': 'multipart/form-data'
           },
           onUploadProgress: (progressEvent) => {
             const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
@@ -212,6 +212,8 @@ const handleUpload = async ({ file }) => {
     }
 
     const fileId = response.data.data.id;
+
+    // 获取文件详细信息
     const res = await apiClient.get(`/files/${fileId}`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -222,10 +224,12 @@ const handleUpload = async ({ file }) => {
       throw new Error(res.data.message || '检测结果获取失败');
     }
 
+    // 更新分析结果
     analysisResult.value = {
       ...res.data.data,
       details: res.data.data.details || '检测完成'
     };
+
     uploadProgress.value.status = 'success';
     uploadProgress.value.message = '上传完成';
   } catch (error) {
@@ -233,7 +237,7 @@ const handleUpload = async ({ file }) => {
     uploadProgress.value.status = 'exception';
     uploadProgress.value.message = error.message;
   } finally {
-    uploadProgress.value.show = false; // 修正为 false
+    uploadProgress.value.show = false; // 隐藏上传进度条
   }
 };
 

@@ -10,7 +10,7 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      // 修正后的代理配置
+      // 代理配置
       '/user': {
         target: 'http://100.118.110.15:80',
         changeOrigin: true,
