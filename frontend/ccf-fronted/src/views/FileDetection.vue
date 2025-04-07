@@ -28,7 +28,7 @@
     </div>
 
     <!-- 分析结果 -->
-    <div v-if="analysisResult" class="result-card">
+    <div v-if="analysisResult.originalName" class="result-card">
       <el-card class="result-card-content">
         <div class="result-header">检测结果</div>
         <div class="result-item">
@@ -49,6 +49,34 @@
         <div class="result-item">
           <span class="label">详细信息：</span>
           <span class="value">{{ analysisResult.details || '暂无详细信息' }}</span>
+        </div>
+        <div class="result-item">
+          <span class="label">上传时间：</span>
+          <span class="value">{{ analysisResult.uploadTime }}</span>
+        </div>
+        <div class="result-item">
+          <span class="label">文件大小：</span>
+          <span class="value">{{ analysisResult.fileSize }} bytes</span>
+        </div>
+        <div class="result-item">
+          <span class="label">内容类型：</span>
+          <span class="value">{{ analysisResult.contentType }}</span>
+        </div>
+        <div class="result-item">
+          <span class="label">置信度：</span>
+          <span class="value">{{ analysisResult.confidence }}</span>
+        </div>
+        <div class="result-item">
+          <span class="label">检测时间：</span>
+          <span class="value">{{ analysisResult.detectionTime }}</span>
+        </div>
+        <div class="result-item">
+          <span class="label">文件路径：</span>
+          <span class="value">{{ analysisResult.filePath }}</span>
+        </div>
+        <div class="result-item">
+          <span class="label">存储名称：</span>
+          <span class="value">{{ analysisResult.storedName }}</span>
         </div>
       </el-card>
     </div>
@@ -90,7 +118,22 @@ const uploadProgress = ref({
   status: 'success',
   message: ''
 });
-const analysisResult = ref(null);
+
+// 初始化 analysisResult 为一个对象
+const analysisResult = ref({
+  id: '',
+  uploadFileUserId: '',
+  originalName: '',
+  fileSize: 0,
+  contentType: '',
+  uploadTime: '',
+  confidence: 0,
+  detectionTime: '',
+  malicious: false,
+  filePath: '',
+  storedName: '',
+  details: ''
+});
 
 // 文件列表相关状态
 const files = ref([]);
@@ -129,7 +172,6 @@ const handlePageChange = (page) => {
 };
 
 // 文件上传处理
-// 文件上传处理
 const handleUpload = async ({ file }) => {
   try {
     const token = localStorage.getItem('token');
@@ -139,18 +181,17 @@ const handleUpload = async ({ file }) => {
 
     const formData = new FormData();
     formData.append('file', file);
-    const queryParams = `?file=${encodeURIComponent(file.name)}`;
 
     uploadProgress.value.show = true;
     uploadProgress.value.message = '正在上传文件...';
 
     const response = await apiClient.post(
-        `/files/upload${queryParams}`,
+        '/files/upload',
         formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data' // Axios 会自动设置 multipart/form-data
           },
           onUploadProgress: (progressEvent) => {
             const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
@@ -160,12 +201,12 @@ const handleUpload = async ({ file }) => {
         }
     );
 
-    // 新增：检查 HTTP 状态码
+    // 检查 HTTP 状态码
     if (response.status !== 200) {
       throw new Error(`HTTP 错误: ${response.status}`);
     }
 
-    // 新增：检查业务逻辑 success 字段
+    // 检查业务逻辑 success 字段
     if (!response.data.success) {
       throw new Error(response.data.message || '文件上传失败');
     }
@@ -192,7 +233,7 @@ const handleUpload = async ({ file }) => {
     uploadProgress.value.status = 'exception';
     uploadProgress.value.message = error.message;
   } finally {
-    uploadProgress.value.show = true;
+    uploadProgress.value.show = false; // 修正为 false
   }
 };
 

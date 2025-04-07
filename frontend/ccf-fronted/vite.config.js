@@ -12,26 +12,26 @@ export default defineConfig({
     proxy: {
       // 修正后的代理配置
       '/user': {
-        target: 'http://100.118.110.15:8080',
+        target: 'http://100.118.110.15:80',
         changeOrigin: true,
 
       },
-      '/file': {
-        target: 'http://100.118.110.15:8080',
+      '/files': {
+        target: 'http://100.118.110.15:80',
         changeOrigin: true,
 
       },
       '/logs': {
-        target: 'http://100.118.110.15:8080',
+        target: 'http://100.118.110.15:80',
         changeOrigin: true,
 
       },
       '/traffic': {
-        target: 'http://100.118.110.15:8080',
+        target: 'http://100.118.110.15:80',
         changeOrigin: true,
       },
       '/deepStudyLog': {
-        target: 'http://100.118.110.15:8080',
+        target: 'http://100.118.110.15:80',
         changeOrigin: true,
       }
     },
