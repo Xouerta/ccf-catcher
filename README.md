@@ -27,7 +27,7 @@ ccf-catcher/
 │   ├── PORT
 │   ├── TCP
 │   └── UDP
-└── requirements.txt         # 依赖库清单
+└── requirement.txt         # 依赖库清单
 ```
 
 
@@ -37,7 +37,7 @@ ccf-catcher/
 ### 依赖安装
 ```bash
 # 安装基础依赖
-pip install -r requirements.txt
+pip install -r requirement.txt
 
 # 安装Scapy（需管理员权限）
 pip install scapy[complete]
