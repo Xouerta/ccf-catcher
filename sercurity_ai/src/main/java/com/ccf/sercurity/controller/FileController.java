@@ -14,8 +14,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
-
 @Slf4j
 @Validated
 @RestController
@@ -37,12 +35,7 @@ public class FileController {
             // 保存文件信息
             FileInfo fileInfo = fileService.saveFile(file, userId);
 
-            // 检测文件是否恶意
-            boolean isMalicious = maliciousDetectionService.detectMaliciousFile(fileInfo, file);
-
-            if (isMalicious) {
-                return ResponseEntity.badRequest().body(Map.of("msg", "文件上传失败: 文件被检测为恶意文件", "code", 1043));
-            }
+            maliciousDetectionService.detectMaliciousFile(fileInfo, file);
 
             return ResponseEntity.ok(fileInfo);
         } catch (Exception e) {
