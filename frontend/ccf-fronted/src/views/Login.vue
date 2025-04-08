@@ -142,6 +142,42 @@ const submitForm = (formEl) => {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  z-index: 1;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow:
+      0 0 0 30px rgba(0,0,0,0.8),
+      0 0 20px rgba(0,0,0,0.5) inset;
+}
+
+/* 新增伪元素实现科技感条纹 */
+.login-container::before,
+.login-container::after {
+  content: '';
+  position: absolute;
+  left: -30px;
+  right: -30px;
+  height: 30px;
+  background: linear-gradient(90deg,
+  rgba(0, 255, 255, 0.3) 25%,
+  transparent 50%,
+  rgba(0, 255, 255, 0.3) 75%
+  );
+  background-size: 80px 30px;
+  border-radius: 20px 20px 0 0;
+  animation: gradientMove 3s linear infinite; /* 添加动画 */
+}
+
+.login-container::after {
+  bottom: -30px;
+  border-radius: 0 0 20px 20px;
+}
+
+/* 动画关键帧 */
+@keyframes gradientMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 80px 0; }
 }
 
 /* 左侧登录区域 */
@@ -160,7 +196,7 @@ const submitForm = (formEl) => {
 
 .form-container {
   width: 100%;
-  padding: 32px;
+  padding: 2px;
 }
 
 /* 右侧标题区域 */
