@@ -46,10 +46,10 @@
             {{ analysisResult.malicious ? '恶意文件' : '安全文件' }}
           </span>
         </div>
-        <div class="result-item">
-          <span class="label">详细信息：</span>
-          <span class="value">{{ analysisResult.details || '暂无详细信息' }}</span>
-        </div>
+<!--        <div class="result-item">-->
+<!--          <span class="label">详细信息：</span>-->
+<!--          <span class="value">{{ analysisResult.details || '暂无详细信息' }}</span>-->
+<!--        </div>-->
         <div class="result-item">
           <span class="label">上传时间：</span>
           <span class="value">{{ analysisResult.uploadTime }}</span>
@@ -132,7 +132,7 @@ const analysisResult = ref({
   malicious: false,
   filePath: '',
   storedName: '',
-  details: ''
+  // details: '',
 });
 
 // 文件列表相关状态
@@ -206,12 +206,7 @@ const handleUpload = async ({ file }) => {
       throw new Error(`HTTP 错误: ${response.status}`);
     }
 
-    // 检查业务逻辑 success 字段
-    if (!response.data.success) {
-      throw new Error(response.data.message || '文件上传失败');
-    }
-
-    const fileId = response.data.data.id;
+    const fileId = response.data.id;
 
     // 获取文件详细信息
     const res = await apiClient.get(`/files/${fileId}`, {
@@ -220,14 +215,20 @@ const handleUpload = async ({ file }) => {
       }
     });
 
-    if (!res.data.success) {
-      throw new Error(res.data.message || '检测结果获取失败');
-    }
-
     // 更新分析结果
     analysisResult.value = {
-      ...res.data.data,
-      details: res.data.data.details || '检测完成'
+      id: fileId,
+      uploadFileUserId: res.data.uploadFileUserId,
+      originalName: res.data.originalName,
+      fileSize: res.data.fileSize,
+      contentType: res.data.contentType,
+      uploadTime: res.data.uploadTime,
+      confidence: res.data.confidence,
+      detectionTime: res.data.detectionTime,
+      malicious: res.data.malicious,
+      filePath: res.data.filePath,
+      storedName: res.data.storedName,
+      details: res.data.details || '检测完成'
     };
 
     uploadProgress.value.status = 'success';

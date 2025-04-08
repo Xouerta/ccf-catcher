@@ -208,7 +208,7 @@ const checkPasswordStrength = async () => {
     console.error('密码强度检测失败:', error);
     strengthLevel.value = {
       type: 'error',
-      message: '密码强度检测失败，请重试'
+      message: '密码强度低'
     };
   }
 };
