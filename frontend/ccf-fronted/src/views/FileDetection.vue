@@ -154,7 +154,7 @@ const fetchFiles = async () => {
       }
     });
 
-    if (res.data.success) {
+    if (res.status === 200) {
       files.value = res.data.list;
       total.value = res.data.total;
     } else {
