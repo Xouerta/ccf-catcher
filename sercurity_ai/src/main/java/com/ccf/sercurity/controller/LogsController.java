@@ -34,4 +34,10 @@ public class LogsController {
         return ResponseEntity.ok(logService.listLogs(userId, page, size, status, host));
     }
 
+    @GetMapping("/analyze")
+    public ResponseEntity analyze(
+            @RequestHeader("Authorization") @Token String userId
+    ) {
+        return ResponseEntity.ok().build();
+    }
 }

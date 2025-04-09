@@ -1,8 +1,11 @@
 package com.ccf.sercurity.service;
 
 import com.ccf.sercurity.model.TrafficData;
+import com.ccf.sercurity.model.enums.WebsocketTypeEnum;
 import com.ccf.sercurity.repository.TrafficRepository;
 import com.ccf.sercurity.vo.PageResult;
+import com.ccf.sercurity.vo.WebsocketPushVO;
+import com.ccf.sercurity.websocket.WebSocketServer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -49,6 +53,12 @@ public class TrafficAnalysisService {
 
         trafficRepository.save(trafficData);
         log.info("Traffic data saved: {}", trafficData);
+
+        WebsocketPushVO<TrafficData> vo = new WebsocketPushVO<>();
+        vo.setCode(HttpStatus.OK.value())
+                .setType(WebsocketTypeEnum.TRAFFIC.getType())
+                .setData(trafficData);
+        WebSocketServer.sendMessage(vo);
     }
 
 

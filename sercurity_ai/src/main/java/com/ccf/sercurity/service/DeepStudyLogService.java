@@ -2,9 +2,12 @@ package com.ccf.sercurity.service;
 
 import com.ccf.sercurity.config.DeepStudyLogConfig;
 import com.ccf.sercurity.model.DeepStudyLog;
+import com.ccf.sercurity.model.enums.WebsocketTypeEnum;
 import com.ccf.sercurity.repository.DeepStudyLogRepository;
 import com.ccf.sercurity.vo.DeepStudyModelResponeVO;
 import com.ccf.sercurity.vo.PageResult;
+import com.ccf.sercurity.vo.WebsocketPushVO;
+import com.ccf.sercurity.websocket.WebSocketServer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.Min;
@@ -14,6 +17,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -48,7 +52,13 @@ public class DeepStudyLogService {
             deepStudyLog.setHost(matcher.group("hostname"));
         }
         deepStudyLogRepository.save(deepStudyLog);
-        log.info("DeepStudyLog saved: {}", deepStudyLog);
+
+        WebsocketPushVO<Object> pushVO = new WebsocketPushVO<>()
+                .setType(WebsocketTypeEnum.DEEP_STUDY_LOG.getType())
+                .setCode(HttpStatus.OK.value())
+                .setData(deepStudyLog);
+        WebSocketServer.sendMessage(pushVO);
+        log.info("websocket推送消息: {}", pushVO);
     }
 
     public DeepStudyModelResponeVO getDeepStudyModelResponeVO(String userId) {

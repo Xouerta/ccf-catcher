@@ -4,6 +4,7 @@ import com.ccf.sercurity.annotation.Token;
 import com.ccf.sercurity.model.FileInfo;
 import com.ccf.sercurity.service.FileService;
 import com.ccf.sercurity.service.MaliciousDetectionService;
+import com.ccf.sercurity.vo.AnalysisFileResultVO;
 import com.ccf.sercurity.vo.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.Min;
@@ -62,5 +63,11 @@ public class FileController {
         return ResponseEntity.ok(fileService.listFiles(userId, page, size));
     }
 
-
+    @GetMapping("/analyze")
+    @Operation(description = "分析文件, 不区分admin和普通用户")
+    public ResponseEntity<AnalysisFileResultVO> analyze(
+            @RequestHeader("Authorization") @Token String userId
+    ) {
+        return ResponseEntity.ok(fileService.analyze(userId));
+    }
 } 

@@ -41,4 +41,13 @@ public class DeepStudyLogController {
     ) {
         return ResponseEntity.ok(deepStudyLogService.list(userId, page, size, attack, host));
     }
+
+    // 分析
+    @GetMapping("/analyze")
+    public ResponseEntity analyze(
+            @RequestHeader("Authorization") @Token String userId
+    ) {
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -3,13 +3,18 @@ package com.ccf.sercurity.service;
 import com.ccf.sercurity.error.ErrorEnum;
 import com.ccf.sercurity.error.PlatformException;
 import com.ccf.sercurity.model.FileInfo;
+import com.ccf.sercurity.model.enums.WebsocketTypeEnum;
 import com.ccf.sercurity.repository.FileRepository;
 import com.ccf.sercurity.service.util.StorageService;
+import com.ccf.sercurity.vo.AnalysisFileResultVO;
 import com.ccf.sercurity.vo.PageResult;
+import com.ccf.sercurity.vo.WebsocketPushVO;
+import com.ccf.sercurity.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -84,6 +89,13 @@ public class FileService {
                 new PlatformException(ErrorEnum.NET_ERROR));
 
         log.info("{} 更新文件信息成功", file.getId());
+
+        WebsocketPushVO<FileInfo> pushVO = new WebsocketPushVO<>();
+        pushVO.setCode(HttpStatus.OK.value())
+                .setType(WebsocketTypeEnum.FILE.getType())
+                .setData(file);
+
+        WebSocketServer.sendMessage(pushVO);
         return fileRepository.save(file);
     }
 
@@ -118,4 +130,12 @@ public class FileService {
 
         return pageResult;
     }
-} 
+
+    public AnalysisFileResultVO analyze(String userId) {
+        long maliciousCount = fileRepository.countByIsMalicious(true); // 恶意
+        long safeCount = fileRepository.countByIsMalicious(false); // 正常
+
+        log.info("用户 {} 文件分析 安全 {}  危险  {}", userId, safeCount, maliciousCount);
+        return new AnalysisFileResultVO(maliciousCount, safeCount, maliciousCount + safeCount);
+    }
+}

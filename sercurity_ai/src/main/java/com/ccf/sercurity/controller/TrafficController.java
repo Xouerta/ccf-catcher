@@ -29,4 +29,11 @@ public class TrafficController {
 
         return ResponseEntity.ok(trafficAnalysisService.listTraffic(userId, page, size));
     }
+
+    @GetMapping("/analyze")
+    public ResponseEntity analyze(
+            @RequestHeader("Authorization") @Token String userId
+    ) {
+        return ResponseEntity.ok().build();
+    }
 }
