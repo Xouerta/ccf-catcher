@@ -78,13 +78,8 @@ const chartRef2 = ref(null); // 第二个图表容器的引用
 const chartRef3 = ref(null); // 第三个图表容器的引用
 const chartRef4 = ref(null); // 第四个图表容器的引用
 
-// 准确率数据（满分是100）
-const chartData = ref([
-  { name: '异常流量判断率', value: 99.67 },
-  { name: '文件上传判断率', value: 99.01 },
-  { name: '密码强弱判断准确率', value: 95.97 },
-  { name: '日志准确度', value: 87.97 },
-]);
+// 图表数据（初始为空）
+const chartData = ref([]);
 
 // 实时日志数据
 const logs = ref([]);
@@ -143,6 +138,11 @@ const initWebSocket = async (userId) => {
 const initCharts = async () => {
   await nextTick(); // 确保DOM已渲染
 
+  if (chartData.value.length === 0) {
+    console.warn('chartData 为空，无法初始化图表');
+    return;
+  }
+
   const charts = [
     echarts.init(chartRef1.value),
     echarts.init(chartRef2.value),
@@ -185,7 +185,7 @@ const initCharts = async () => {
             fontWeight: 'bold',
           },
         },
-        data: [{ name: item.name, value: item.value }],
+        data: item.data,
         itemStyle: {
           borderColor: '#fff',
           borderWidth: 2,
@@ -196,7 +196,9 @@ const initCharts = async () => {
   }));
 
   charts.forEach((chartInstance, index) => {
-    chartInstance.setOption(options[index]);
+    if (chartInstance) {
+      chartInstance.setOption(options[index]);
+    }
   });
 };
 
@@ -206,13 +208,44 @@ const updateChartData = async () => {
     // 请求接口获取数据
     const trafficResponse = await apiClient.get('/traffic/analyze');
     const filesResponse = await apiClient.get('/files/analyze');
+    const logsResponse = await apiClient.get('/logs/analyze');
     const deepStudyLogResponse = await apiClient.get('/deepStudyLog/analyze');
 
     // 更新图表数据
-    chartData.value[0].value = parseFloat(trafficResponse.data); // 假设返回值可以直接用于图表
-    chartData.value[1].value = (filesResponse.data.safeCount / filesResponse.data.totalFiles) * 100; // 计算百分比
-    chartData.value[2].value = 95.97; // 示例数据，需根据实际接口调整
-    chartData.value[3].value = (deepStudyLogResponse.data.safeCount / deepStudyLogResponse.data.totalFiles) * 100; // 计算百分比
+    chartData.value = [
+      {
+        name: '异常流量分析',
+        data: [
+          {name: '正常', value: 100 - parseFloat(trafficResponse.data)},
+          {name: '异常', value: parseFloat(trafficResponse.data)},
+        ],
+      },
+      {
+        name: '异常文件分析',
+        data: [
+          {name: '正常', value: (filesResponse.data.safeCount / filesResponse.data.totalFiles) * 100},
+          {name: '异常', value: (filesResponse.data.maliciousCount / filesResponse.data.totalFiles) * 100},
+        ],
+      },
+      {
+        name: '日志分析',
+        data: [
+          {name: '日志准确度', value: parseFloat(logsResponse.data)}, // 假设返回的是一个百分比值
+        ],
+      },
+      {
+        name: 'AI日志分析',
+        data: [
+          {
+            name: 'AI日志准确度',
+            value: (deepStudyLogResponse.data.safeCount / deepStudyLogResponse.data.totalFiles) * 100
+          },
+        ],
+      },
+    ];
+
+    // 确保DOM已渲染
+    await nextTick();
 
     // 重新渲染图表
     const charts = [
@@ -223,15 +256,54 @@ const updateChartData = async () => {
     ];
 
     const options = chartData.value.map((item, index) => ({
+      title: {
+        text: item.name,
+        left: 'center',
+        textStyle: {
+          fontSize: 14,
+          fontWeight: 'bold',
+        },
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c}%',
+      },
       series: [
         {
-          data: [{ name: item.name, value: item.value }],
+          name: item.name,
+          type: 'pie',
+          radius: ['50%', '70%'],
+          center: ['50%', '60%'],
+          avoidLabelOverlap: false,
+          label: {
+            show: true,
+            position: 'center',
+            formatter: `{@value}%`,
+            fontSize: 16,
+            fontWeight: 'bold',
+            color: '#333',
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: '16',
+              fontWeight: 'bold',
+            },
+          },
+          data: item.data,
+          itemStyle: {
+            borderColor: '#fff',
+            borderWidth: 2,
+          },
+          backgroundColor: '#f0f0f0',
         },
       ],
     }));
 
     charts.forEach((chartInstance, index) => {
-      chartInstance.setOption(options[index], true); // true 表示保留旧配置
+      if (chartInstance) {
+        chartInstance.setOption(options[index], true); // true 表示保留旧配置
+      }
     });
   } catch (error) {
     console.error('更新图表数据失败:', error);
@@ -247,10 +319,13 @@ onMounted(async () => {
     // 2. 初始化WebSocket
     await initWebSocket(userId);
 
-    // 3. 初始化图表
+    // 3. 初始数据加载
+    await updateChartData();
+
+    // 4. 初始化图表
     await initCharts();
 
-    // 4. 每五分钟定时更新图表数据
+    // 5. 每五分钟定时更新图表数据
     setInterval(updateChartData, 5 * 60 * 1000); // 每5分钟调用一次
   } catch (error) {
     console.error('初始化失败:', error);
@@ -263,7 +338,6 @@ onUnmounted(() => {
   }
 });
 </script>
-
 
 <style scoped>
 .carousel-container {
