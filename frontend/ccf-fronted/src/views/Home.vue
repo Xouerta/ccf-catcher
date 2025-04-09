@@ -44,8 +44,9 @@
 </template>
 
 <script setup>
-import {ref, onMounted, onUnmounted} from 'vue';
-import * as echarts from 'echarts'; // 引入 ECharts
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+import * as echarts from 'echarts';
+import apiClient from "@/api/axiosInstance.js"; // 引入API客户端
 
 // 轮播图配置（需替换为实际图片路径）
 const carouselItems = ref([
@@ -71,23 +72,6 @@ const carouselItems = ref([
   }
 ]);
 
-// 模拟实时日志数据
-const logs = ref([]);
-const logInterval = ref(null);
-
-onMounted(() => {
-  logInterval.value = setInterval(() => {
-    const severity = Math.random() > 0.7 ? 'error' : 'info';
-    logs.value.push({
-      level: severity,
-      message: `[${new Date().toLocaleTimeString()}] ${severity.toUpperCase()} - 模拟日志内容 ${logs.value.length + 1}`
-    });
-    if (logs.value.length > 100) logs.value.shift();
-  }, 5000);
-});
-
-onUnmounted(() => clearInterval(logInterval.value));
-
 // 图表相关逻辑
 const chartRef1 = ref(null); // 第一个图表容器的引用
 const chartRef2 = ref(null); // 第二个图表容器的引用
@@ -96,14 +80,69 @@ const chartRef4 = ref(null); // 第四个图表容器的引用
 
 // 准确率数据（满分是100）
 const chartData = ref([
-  {name: '异常流量判断率', value: 99.67},
-  {name: '文件上传判断率', value: 99.01},
-  {name: '密码强弱判断准确率', value: 95.97},
-  {name: '日志准确度', value: 87.97},
+  { name: '异常流量判断率', value: 99.67 },
+  { name: '文件上传判断率', value: 99.01 },
+  { name: '密码强弱判断准确率', value: 95.97 },
+  { name: '日志准确度', value: 87.97 },
 ]);
 
-onMounted(() => {
-  // 初始化四个 ECharts 实例
+// 实时日志数据
+const logs = ref([]);
+const ws = ref(null); // WebSocket实例
+
+// 获取用户ID函数
+const getUserId = async () => {
+  try {
+    const response = await apiClient.get('/user/info');
+    const data = response.data;
+    console.log('获取到的用户ID:', data.id);
+    return data.id; // 返回用户ID
+  } catch (error) {
+    console.error('获取用户ID失败:', error);
+    throw error;
+  }
+};
+
+// WebSocket连接逻辑
+const initWebSocket = async (userId) => {
+  try {
+    // 动态替换WebSocket URL中的{userId}
+    ws.value = new WebSocket(
+        `${import.meta.env.VITE_APP_WS_URL}/websocket/${userId}`
+    );
+
+    ws.value.addEventListener('open', () => {
+      console.log('WebSocket连接已建立');
+    });
+
+    ws.value.addEventListener('message', (event) => {
+      try {
+        const logData = JSON.parse(event.data);
+        if (logData.level && logData.message) {
+          logs.value.push(logData);
+          if (logs.value.length > 100) logs.value.shift();
+        }
+      } catch (error) {
+        console.error('日志数据解析失败:', error);
+      }
+    });
+
+    ws.value.addEventListener('error', (error) => {
+      console.error('WebSocket连接异常:', error);
+    });
+
+    ws.value.addEventListener('close', () => {
+      console.log('WebSocket连接已关闭');
+    });
+  } catch (error) {
+    console.error('WebSocket初始化失败:', error);
+  }
+};
+
+// 初始化图表
+const initCharts = async () => {
+  await nextTick(); // 确保DOM已渲染
+
   const charts = [
     echarts.init(chartRef1.value),
     echarts.init(chartRef2.value),
@@ -111,7 +150,6 @@ onMounted(() => {
     echarts.init(chartRef4.value),
   ];
 
-  // 配置图表选项
   const options = chartData.value.map((item, index) => ({
     title: {
       text: item.name,
@@ -128,14 +166,14 @@ onMounted(() => {
     series: [
       {
         name: item.name,
-        type:'pie',
-        radius: ['50%', '70%'], // 设置为环形图
-        center: ['50%', '60%'], // 调整图表中心位置
+        type: 'pie',
+        radius: ['50%', '70%'],
+        center: ['50%', '60%'],
         avoidLabelOverlap: false,
         label: {
           show: true,
           position: 'center',
-          formatter: `{@value}%`, // 显示百分比
+          formatter: `{@value}%`,
           fontSize: 16,
           fontWeight: 'bold',
           color: '#333',
@@ -147,22 +185,85 @@ onMounted(() => {
             fontWeight: 'bold',
           },
         },
-        data: [{name: item.name, value: item.value}],
+        data: [{ name: item.name, value: item.value }],
         itemStyle: {
           borderColor: '#fff',
           borderWidth: 2,
         },
-        backgroundColor: '#f0f0f0', // 背景颜色
+        backgroundColor: '#f0f0f0',
       },
     ],
   }));
 
-  // 设置每个图表的选项并渲染
   charts.forEach((chartInstance, index) => {
     chartInstance.setOption(options[index]);
   });
+};
+
+// 定时更新图表数据
+const updateChartData = async () => {
+  try {
+    // 请求接口获取数据
+    const trafficResponse = await apiClient.get('/traffic/analyze');
+    const filesResponse = await apiClient.get('/files/analyze');
+    const deepStudyLogResponse = await apiClient.get('/deepStudyLog/analyze');
+
+    // 更新图表数据
+    chartData.value[0].value = parseFloat(trafficResponse.data); // 假设返回值可以直接用于图表
+    chartData.value[1].value = (filesResponse.data.safeCount / filesResponse.data.totalFiles) * 100; // 计算百分比
+    chartData.value[2].value = 95.97; // 示例数据，需根据实际接口调整
+    chartData.value[3].value = (deepStudyLogResponse.data.safeCount / deepStudyLogResponse.data.totalFiles) * 100; // 计算百分比
+
+    // 重新渲染图表
+    const charts = [
+      echarts.getInstanceByDom(chartRef1.value),
+      echarts.getInstanceByDom(chartRef2.value),
+      echarts.getInstanceByDom(chartRef3.value),
+      echarts.getInstanceByDom(chartRef4.value),
+    ];
+
+    const options = chartData.value.map((item, index) => ({
+      series: [
+        {
+          data: [{ name: item.name, value: item.value }],
+        },
+      ],
+    }));
+
+    charts.forEach((chartInstance, index) => {
+      chartInstance.setOption(options[index], true); // true 表示保留旧配置
+    });
+  } catch (error) {
+    console.error('更新图表数据失败:', error);
+  }
+};
+
+// 生命周期钩子
+onMounted(async () => {
+  try {
+    // 1. 获取用户ID
+    const userId = await getUserId();
+
+    // 2. 初始化WebSocket
+    await initWebSocket(userId);
+
+    // 3. 初始化图表
+    await initCharts();
+
+    // 4. 每五分钟定时更新图表数据
+    setInterval(updateChartData, 5 * 60 * 1000); // 每5分钟调用一次
+  } catch (error) {
+    console.error('初始化失败:', error);
+  }
+});
+
+onUnmounted(() => {
+  if (ws.value && ws.value.readyState === WebSocket.OPEN) {
+    ws.value.close();
+  }
 });
 </script>
+
 
 <style scoped>
 .carousel-container {
