@@ -19,7 +19,7 @@ def calculate_entropy(password):
     return entropy * length
 
 def extract_text_features(passwords, train_mode=True):
-    vectorizer_path = "../models/TFidf.pkl"
+    vectorizer_path = "models/TFidf.pkl"
     
     # TF-IDF特征
     if train_mode:
