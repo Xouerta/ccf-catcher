@@ -15,4 +15,8 @@ public interface FileRepository extends ElasticsearchRepository<FileInfo, String
     Page<FileInfo> searchFileInfoByUploadFileUserId(String userId, Pageable pageable);
 
     Page<FileInfo> findBy(Pageable pageable);
+
+    long countByIsMalicious(boolean malicious);
+
+
 }
