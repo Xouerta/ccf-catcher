@@ -42,10 +42,10 @@
             <span>修改用户密码</span>
           </el-menu-item>
           <el-menu-item index="LogMonitoring" :route="{ name: 'LogMonitoring' }">
-            <span>日志检测</span>
+            <span>AI日志检测</span>
           </el-menu-item>
           <el-menu-item index="AIlog" :route="{ name: 'AIlog' }">
-            <span>AI日志</span>
+            <span>日志检测</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
