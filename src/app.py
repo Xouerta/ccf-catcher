@@ -15,7 +15,7 @@ app = Flask(__name__)
 KAFKA_TOPIC = os.environ.get('KAFKA_TOPIC', 'network_predictions')
 KAFKA_BOOTSTRAP = os.environ.get('KAFKA_BOOTSTRAP', '100.118.110.15:9092')
 
-MODEL_PATH = "../model/best_model_hgb_202503191724.joblib"
+MODEL_PATH = "model/best_model_hgb_202503191724.joblib"
 model = joblib.load(MODEL_PATH)
 
 # 修改后的feature_columns
