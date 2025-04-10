@@ -3,6 +3,7 @@ package com.ccf.sercurity.controller;
 import com.ccf.sercurity.annotation.Token;
 import com.ccf.sercurity.model.DeepStudyLog;
 import com.ccf.sercurity.service.DeepStudyLogService;
+import com.ccf.sercurity.vo.AnalysisDeepStudyLogResultVO;
 import com.ccf.sercurity.vo.DeepStudyModelResponeVO;
 import com.ccf.sercurity.vo.PageResult;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -44,10 +45,8 @@ public class DeepStudyLogController {
 
     // 分析
     @GetMapping("/analyze")
-    public ResponseEntity analyze(
-            @RequestHeader("Authorization") @Token String userId
-    ) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AnalysisDeepStudyLogResultVO> analyze(@RequestHeader("Authorization") @Token String userId) {
+        return ResponseEntity.ok(deepStudyLogService.analyze(userId));
     }
 
 }

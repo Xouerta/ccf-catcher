@@ -4,6 +4,7 @@ import com.ccf.sercurity.config.DeepStudyLogConfig;
 import com.ccf.sercurity.model.DeepStudyLog;
 import com.ccf.sercurity.model.enums.WebsocketTypeEnum;
 import com.ccf.sercurity.repository.DeepStudyLogRepository;
+import com.ccf.sercurity.vo.AnalysisDeepStudyLogResultVO;
 import com.ccf.sercurity.vo.DeepStudyModelResponeVO;
 import com.ccf.sercurity.vo.PageResult;
 import com.ccf.sercurity.vo.WebsocketPushVO;
@@ -98,5 +99,14 @@ public class DeepStudyLogService {
         pageResult.setSize(pages.getSize());
         pageResult.setList(pages.getContent());
         return pageResult;
+    }
+
+    public AnalysisDeepStudyLogResultVO analyze(String userId) {
+
+        long attackCount = deepStudyLogRepository.countByAttackDetected(true);
+        long normalCount = deepStudyLogRepository.countByAttackDetected(false);
+
+        log.info("用户 {} 深度学习日志分析 正常 {}  攻击  {}", userId, normalCount, attackCount);
+        return new AnalysisDeepStudyLogResultVO(attackCount, normalCount, attackCount + normalCount);
     }
 }

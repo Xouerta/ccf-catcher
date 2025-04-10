@@ -14,4 +14,5 @@ public interface DeepStudyLogRepository extends ElasticsearchRepository<DeepStud
 
     Page<DeepStudyLog> findByHost(String host, PageRequest pageRequest);
 
+    long countByAttackDetected(Boolean attack);
 }
