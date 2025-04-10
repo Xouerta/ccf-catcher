@@ -117,7 +117,7 @@ const initWebSocket = async (userId) => {
 
     ws.value.addEventListener('message', (event) => {
       try {
-        const logData = JSON.parse(event.data).data;
+        const logData = JSON.parse(event.data);
 
         // 检查数据是否有效
         if (!logData || !logData.type || !logData.data) {
