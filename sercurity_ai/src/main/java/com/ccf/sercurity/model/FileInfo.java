@@ -3,7 +3,10 @@ package com.ccf.sercurity.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.*;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.util.Date;
 
@@ -65,7 +68,6 @@ public class FileInfo {
     /**
      * 文件是否被检测为恶意文件的标志
      */
-    @IndexedIndexName
     @Field(type = FieldType.Boolean)
     private boolean isMalicious;
 
