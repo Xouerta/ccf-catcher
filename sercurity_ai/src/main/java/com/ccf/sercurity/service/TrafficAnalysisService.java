@@ -1,8 +1,12 @@
 package com.ccf.sercurity.service;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
 import com.ccf.sercurity.model.TrafficData;
 import com.ccf.sercurity.model.enums.WebsocketTypeEnum;
 import com.ccf.sercurity.repository.TrafficRepository;
+import com.ccf.sercurity.vo.AnalysisTrafficResultVO;
 import com.ccf.sercurity.vo.PageResult;
 import com.ccf.sercurity.vo.WebsocketPushVO;
 import com.ccf.sercurity.websocket.WebSocketServer;
@@ -16,8 +20,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 流量分析服务类
@@ -32,6 +40,8 @@ public class TrafficAnalysisService {
      */
     private final TrafficRepository trafficRepository;
 
+    private final ElasticsearchClient client;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
@@ -40,8 +50,9 @@ public class TrafficAnalysisService {
      * @param trafficRepository 流量数据仓库接口
      */
     @Autowired
-    public TrafficAnalysisService(TrafficRepository trafficRepository) {
+    public TrafficAnalysisService(TrafficRepository trafficRepository, ElasticsearchClient client) {
         this.trafficRepository = trafficRepository;
+        this.client = client;
     }
 
     public void saveTrafficData(String message) throws JsonProcessingException {
@@ -76,5 +87,37 @@ public class TrafficAnalysisService {
         pageResult.setSize(pages.getSize());
         pageResult.setList(pages.getContent());
         return pageResult;
+    }
+
+    public AnalysisTrafficResultVO analyze(String userId) throws IOException {
+        SearchResponse<Void> search = client.search(s -> s
+                        .index("traffic")
+                        .size(0)
+                        .aggregations("group_by_result", a -> a
+                                .terms(t -> t
+                                        .field("result")
+                                        .size(10)
+                                )
+                        ),
+                Void.class);
+        List<StringTermsBucket> buckets = search.aggregations()
+                .get("group_by_result")
+                .sterms()
+                .buckets()
+                .array();
+
+        AtomicLong total = new AtomicLong(0);
+
+        Map<String, Long> counts = new HashMap<>();
+        buckets.forEach(bucket -> {
+            total.addAndGet(bucket.docCount());
+            counts.put(bucket.key()._get().toString(), bucket.docCount());
+        });
+
+        log.info("用户 {} 请求流量分析 {} ", userId, counts);
+        return new AnalysisTrafficResultVO(
+                total.get(),
+                counts
+        );
     }
 }

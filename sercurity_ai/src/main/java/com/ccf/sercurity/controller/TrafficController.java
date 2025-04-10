@@ -3,12 +3,15 @@ package com.ccf.sercurity.controller;
 import com.ccf.sercurity.annotation.Token;
 import com.ccf.sercurity.model.TrafficData;
 import com.ccf.sercurity.service.TrafficAnalysisService;
+import com.ccf.sercurity.vo.AnalysisTrafficResultVO;
 import com.ccf.sercurity.vo.PageResult;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,9 +34,8 @@ public class TrafficController {
     }
 
     @GetMapping("/analyze")
-    public ResponseEntity analyze(
-            @RequestHeader("Authorization") @Token String userId
-    ) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AnalysisTrafficResultVO> analyze(@RequestHeader("Authorization") @Token String userId) throws IOException {
+
+        return ResponseEntity.ok(trafficAnalysisService.analyze(userId));
     }
 }
