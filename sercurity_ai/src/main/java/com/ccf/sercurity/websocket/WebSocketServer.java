@@ -4,7 +4,6 @@ import com.ccf.sercurity.error.PlatformException;
 import com.ccf.sercurity.model.enums.WebsocketTypeEnum;
 import com.ccf.sercurity.service.WebsocketService;
 import com.ccf.sercurity.vo.WebsocketPushVO;
-import com.ccf.sercurity.vo.WebsocketScannerVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.*;
@@ -53,7 +52,7 @@ public class WebSocketServer {
     public void onMessage(String message, Session session) throws JsonProcessingException {
         log.info("websocket收到消息 {} {}", userId, message);
 
-        websocketService.parseWebsocketEntity(objectMapper.readValue(message, WebsocketScannerVO.class));
+//        websocketService.parseWebsocketEntity(objectMapper.readValue(message, WebsocketScannerVO.class));
     }
 
     @OnClose
