@@ -19,6 +19,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -111,7 +112,7 @@ public class LogService {
      * @return 分页结果
      */
     public PageResult<LogInfo> listLogs(String userId, @Min(1) Integer page, Integer size, String status, String host) {
-        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "timestamp"));
         log.info("用户 {} 请求查看日志 page: {} size: {} status: {} host: {}", userId, page, size, status, host);
         Page<LogRecord> pages;
 

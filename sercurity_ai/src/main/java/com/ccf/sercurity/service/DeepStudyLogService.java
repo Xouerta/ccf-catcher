@@ -18,6 +18,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -78,7 +79,7 @@ public class DeepStudyLogService {
 
     public PageResult<DeepStudyLog> list(String userId, @Min(1) Integer page, @Min(10) Integer size, Boolean attack, String host) {
 
-        PageRequest pageRequest = PageRequest.of(page - 1, size);
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "timestamp"));
         log.info("用户 {} 请求查看日志 page: {} size: {} attack: {} host: {}", userId, page, size, attack, host);
         Page<DeepStudyLog> pages;
 
