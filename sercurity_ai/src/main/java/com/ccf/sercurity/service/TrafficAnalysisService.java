@@ -63,7 +63,7 @@ public class TrafficAnalysisService {
         trafficData.setTimestamp(new Date());
 
         trafficRepository.save(trafficData);
-        log.info("Traffic data saved: {}", trafficData);
+        log.info("Traffic data saved & websocket: {}", trafficData);
 
         WebsocketPushVO<TrafficData> vo = new WebsocketPushVO<>();
         vo.setCode(HttpStatus.OK.value())

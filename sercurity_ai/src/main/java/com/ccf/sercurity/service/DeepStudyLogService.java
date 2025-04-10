@@ -59,7 +59,7 @@ public class DeepStudyLogService {
                 .setCode(HttpStatus.OK.value())
                 .setData(deepStudyLog);
         WebSocketServer.sendMessage(pushVO);
-        log.info("websocket推送消息: {}", pushVO);
+        log.info("es saved & websocket推送消息: {}", pushVO);
     }
 
     public DeepStudyModelResponeVO getDeepStudyModelResponeVO(String userId) {

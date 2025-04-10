@@ -88,7 +88,7 @@ public class FileService {
         fileRepository.findById(file.getId()).orElseThrow(() ->
                 new PlatformException(ErrorEnum.NET_ERROR));
 
-        log.info("{} 更新文件信息成功", file.getId());
+        log.info("{} 更新文件信息成功 & websocket", file.getId());
 
         WebsocketPushVO<FileInfo> pushVO = new WebsocketPushVO<>();
         pushVO.setCode(HttpStatus.OK.value())
