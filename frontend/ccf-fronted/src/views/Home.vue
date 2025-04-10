@@ -106,13 +106,18 @@ const initWebSocket = async (userId) => {
         `${import.meta.env.VITE_APP_WS_URL}/websocket/${userId}`
     );
 
+    let heart;
     ws.value.addEventListener('open', () => {
       console.log('WebSocket连接已建立');
+
+      heart = setInterval(() => {
+        ws.value.send('{"type": "heart"}')
+      }, 5000)
     });
 
     ws.value.addEventListener('message', (event) => {
       try {
-        const logData = JSON.parse(event.data);
+        const logData = JSON.parse(event.data).data;
 
         // 检查数据是否有效
         if (!logData || !logData.type || !logData.data) {
@@ -135,10 +140,12 @@ const initWebSocket = async (userId) => {
     });
 
     ws.value.addEventListener('error', (error) => {
+      clearInterval(heart)
       console.error('WebSocket连接异常:', error);
     });
 
     ws.value.addEventListener('close', () => {
+      clearInterval(heart)
       console.log('WebSocket连接已关闭');
     });
   } catch (error) {
