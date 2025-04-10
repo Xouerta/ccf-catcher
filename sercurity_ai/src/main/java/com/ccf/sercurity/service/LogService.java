@@ -1,8 +1,12 @@
 package com.ccf.sercurity.service;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
 import com.ccf.sercurity.config.LogConfig;
 import com.ccf.sercurity.model.LogRecord;
 import com.ccf.sercurity.repository.LogRepository;
+import com.ccf.sercurity.vo.AnalysisLogResultVO;
 import com.ccf.sercurity.vo.LogInfo;
 import com.ccf.sercurity.vo.PageResult;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,13 +22,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,16 +49,18 @@ public class LogService {
 
     private final LogConfig logConfig;
 
+    private final ElasticsearchClient client;
     /**
      * 构造函数，注入日志仓库
      *
      * @param logRepository 日志仓库接口
      */
     @Autowired
-    public LogService(LogRepository logRepository, LogConfig logConfig) {
+    public LogService(LogRepository logRepository, LogConfig logConfig, ElasticsearchClient client) {
         this.logRepository = logRepository;
         this.restTemplate = new RestTemplate();
         this.logConfig = logConfig;
+        this.client = client;
     }
 
     /**
@@ -138,6 +143,37 @@ public class LogService {
         pageResult.setSize(pages.getSize());
         pageResult.setList(list);
         return pageResult;
+    }
+
+    public AnalysisLogResultVO analyze(String userId) throws IOException {
+        SearchResponse<Void> search = client.search(s -> s
+                        .index("logs")
+                        .size(0)
+                        .aggregations("group_by_level", a -> a
+                                .terms(t -> t
+                                        .field("level")
+                                        .size(10)
+                                )
+                        ),
+                Void.class);
+        List<StringTermsBucket> buckets = search.aggregations()
+                .get("group_by_level")
+                .sterms()
+                .buckets()
+                .array();
+
+        AtomicLong total = new AtomicLong(0);
+        Map<String, Long> counts = new HashMap<>();
+        buckets.forEach(bucket -> {
+            total.addAndGet(bucket.docCount());
+            counts.put(bucket.key()._get().toString(), bucket.docCount());
+        });
+
+        log.info("用户 {} 日志分析 {} ", userId, counts);
+        return new AnalysisLogResultVO(
+                total.get(),
+                counts
+        );
     }
 
 

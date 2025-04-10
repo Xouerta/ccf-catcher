@@ -36,7 +36,7 @@ public class LogRecord {
     /**
      * 日志级别（INFO, WARN, ERROR等）
      */
-    @Field(type = FieldType.Keyword)
+    @Field(type = FieldType.Keyword, fielddata = true)
     private String level;
 
     /**

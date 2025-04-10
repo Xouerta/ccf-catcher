@@ -2,6 +2,7 @@ package com.ccf.sercurity.controller;
 
 import com.ccf.sercurity.annotation.Token;
 import com.ccf.sercurity.service.LogService;
+import com.ccf.sercurity.vo.AnalysisLogResultVO;
 import com.ccf.sercurity.vo.LogInfo;
 import com.ccf.sercurity.vo.PageResult;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,16 +31,13 @@ public class LogsController {
             @Schema(description = "network_error (连不上deepseek)、 INFO、 ERROR")
             @RequestParam(name = "status", required = false) String status,
             @Schema(description = "主机名")
-            @RequestParam(name = "host", required = false) String host)
-    {
+            @RequestParam(name = "host", required = false) String host) {
 
         return ResponseEntity.ok(logService.listLogs(userId, page, size, status, host));
     }
 
     @GetMapping("/analyze")
-    public ResponseEntity analyze(
-            @RequestHeader("Authorization") @Token String userId
-    ) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AnalysisLogResultVO> analyze(@RequestHeader("Authorization") @Token String userId) throws IOException {
+        return ResponseEntity.ok(logService.analyze(userId));
     }
 }
