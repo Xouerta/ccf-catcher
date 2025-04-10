@@ -33,7 +33,7 @@
               v-for="(log, index) in logs"
               :key="index"
               class="log-item"
-              :class="{ 'error-log': log.level === 'error' }"
+              :class="{ 'error-log': log.level === 'error' , 'traffic-log': log.type === 'traffic'}"
           >
             {{ log.message }}
           </div>
@@ -130,6 +130,8 @@ const initWebSocket = async (userId) => {
           case 'deep_study_log':
             handleDeepStudyLog(logData.data);
             break;
+          case 'traffic':
+            handleTrafficLog(logData.data);
           default:
             console.warn(`未知的日志类型: ${logData.type}`);
             break;
@@ -174,6 +176,21 @@ const handleDeepStudyLog = (logData) => {
   }
 };
 
+const handleTrafficLog = (trafficData) => {
+  const trafficEntry = {
+    type: 'traffic',
+    level: 'info', // 假设所有 deep_study_log 都是 info 级别
+    timestamp: trafficData.timestamp,
+    id: trafficData.id,
+    result: trafficData.result,
+    FlowDuration: trafficData.FlowDuration,
+    message: `Traffic ID: ${trafficData.id}, Result: ${trafficData.result}, Duration: ${trafficData.FlowDuration}`
+  };
+  logs.value.push(trafficEntry);
+  if (logs.value.length > 100) {
+    logs.value.shift(); // 移除最早的日志
+  }
+};
 
 // 初始化图表
 const initCharts = async () => {
