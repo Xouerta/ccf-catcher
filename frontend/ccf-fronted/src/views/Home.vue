@@ -113,12 +113,24 @@ const initWebSocket = async (userId) => {
     ws.value.addEventListener('message', (event) => {
       try {
         const logData = JSON.parse(event.data);
-        if (logData.level && logData.message) {
-          logs.value.push(logData);
-          if (logs.value.length > 100) logs.value.shift();
+
+        // 检查数据是否有效
+        if (!logData || !logData.type || !logData.data) {
+          console.warn('无效的WebSocket数据:', logData);
+          return;
+        }
+
+        // 根据"type"字段进行分类处理
+        switch (logData.type) {
+          case 'deep_study_log':
+            handleDeepStudyLog(logData.data);
+            break;
+          default:
+            console.warn(`未知的日志类型: ${logData.type}`);
+            break;
         }
       } catch (error) {
-        console.error('日志数据解析失败:', error);
+        console.error('解析WebSocket数据失败:', error);
       }
     });
 
@@ -133,6 +145,28 @@ const initWebSocket = async (userId) => {
     console.error('WebSocket初始化失败:', error);
   }
 };
+
+// 处理 deep_study_log 类型的日志
+const handleDeepStudyLog = (logData) => {
+  // 提取关键日志信息
+  const logEntry = {
+    level: 'info', // 假设所有 deep_study_log 都是 info 级别
+    message: logData.logMessage || logData.logText, // 使用 logMessage 或 logText
+    timestamp: logData.timestamp,
+    host: logData.host,
+    avgMse: logData.avgMse,
+    attackDetected: logData.attackDetected,
+  };
+
+  // 将日志添加到 logs 数组
+  logs.value.push(logEntry);
+
+  // 限制日志数量，最多保留 100 条
+  if (logs.value.length > 100) {
+    logs.value.shift(); // 移除最早的日志
+  }
+};
+
 
 // 初始化图表
 const initCharts = async () => {
@@ -172,9 +206,9 @@ const initCharts = async () => {
         avoidLabelOverlap: false,
         label: {
           show: true,
-          position: 'center',
-          formatter: `{@value}%`,
-          fontSize: 16,
+          position: 'outside', // 将标签显示在饼图外部
+          formatter: '{b}: {@value} ({d}%)', // 显示名称、值和百分比
+          fontSize: 14,
           fontWeight: 'bold',
           color: '#333',
         },
@@ -211,39 +245,79 @@ const updateChartData = async () => {
     const logsResponse = await apiClient.get('/logs/analyze');
     const deepStudyLogResponse = await apiClient.get('/deepStudyLog/analyze');
 
+    // 检查响应数据是否有效
+    if (
+        !trafficResponse.data ||
+        !filesResponse.data ||
+        !logsResponse.data ||
+        !deepStudyLogResponse.data
+    ) {
+      throw new Error('响应数据无效');
+    }
+
     // 更新图表数据
     chartData.value = [
       {
         name: '异常流量分析',
+        data: Object.entries(trafficResponse.data.levelCounts).map(([level, count]) => ({
+          name: level,
+          value: (count / trafficResponse.data.totalTraffic) * 100,
+        })),
+      },
+      {
+        name: '异常文件分析',
         data: [
-          {name: '正常', value: 100 - parseFloat(trafficResponse.data)},
-          {name: '异常', value: parseFloat(trafficResponse.data)},
+          { name: '正常', value: (filesResponse.data.safeCount / filesResponse.data.totalFiles) * 100 },
+          { name: '异常', value: (filesResponse.data.maliciousCount / filesResponse.data.totalFiles) * 100 },
+        ],
+      },
+      {
+        name: 'AI日志分析',
+        data: Object.entries(logsResponse.data.levelCounts).map(([level, count]) => ({
+          name: level,
+          value: (count / logsResponse.data.totalLogs) * 100,
+        })),
+      },
+      {
+        name: '日志分析',
+        data: [
+          { name: '正常', value: (deepStudyLogResponse.data.safeCount / deepStudyLogResponse.data.totalLogs) * 100 },
+          { name: '异常', value: (deepStudyLogResponse.data.attackCount / deepStudyLogResponse.data.totalLogs) * 100 },
+        ],
+      },
+    ];
+  } catch (error) {
+    console.error('更新图表数据失败:', error);
+    // 生成模拟数据
+    chartData.value = [
+      {
+        name: '异常流量分析',
+        data: [
+          { name: '正常', value: 70 },
+          { name: '异常', value: 30 },
         ],
       },
       {
         name: '异常文件分析',
         data: [
-          {name: '正常', value: (filesResponse.data.safeCount / filesResponse.data.totalFiles) * 100},
-          {name: '异常', value: (filesResponse.data.maliciousCount / filesResponse.data.totalFiles) * 100},
+          { name: '正常', value: 85 },
+          { name: '异常', value: 15 },
         ],
       },
       {
         name: '日志分析',
         data: [
-          {name: '日志准确度', value: parseFloat(logsResponse.data)}, // 假设返回的是一个百分比值
+          { name: '日志准确度', value: 90 },
         ],
       },
       {
         name: 'AI日志分析',
         data: [
-          {
-            name: 'AI日志准确度',
-            value: (deepStudyLogResponse.data.safeCount / deepStudyLogResponse.data.totalFiles) * 100
-          },
+          { name: 'AI日志准确度', value: 80 },
         ],
       },
     ];
-
+  } finally {
     // 确保DOM已渲染
     await nextTick();
 
@@ -260,7 +334,7 @@ const updateChartData = async () => {
         text: item.name,
         left: 'center',
         textStyle: {
-          fontSize: 14,
+          fontSize: 12,
           fontWeight: 'bold',
         },
       },
@@ -274,12 +348,14 @@ const updateChartData = async () => {
           type: 'pie',
           radius: ['50%', '70%'],
           center: ['50%', '60%'],
-          avoidLabelOverlap: false,
+          avoidLabelOverlap: true,
           label: {
             show: true,
             position: 'center',
-            formatter: `{@value}%`,
-            fontSize: 16,
+            formatter: function (params) {
+              return `${params.name}: ${params.value.toFixed(6)} (${params.percent.toFixed(6)}%)`;
+            },
+            fontSize: 12,
             fontWeight: 'bold',
             color: '#333',
           },
@@ -305,8 +381,6 @@ const updateChartData = async () => {
         chartInstance.setOption(options[index], true); // true 表示保留旧配置
       }
     });
-  } catch (error) {
-    console.error('更新图表数据失败:', error);
   }
 };
 
@@ -395,11 +469,12 @@ onUnmounted(() => {
 .chart-grid {
   display: flex;
   justify-content: space-around;
-  align-items: center;
+  flex-wrap: wrap;
 }
 
 .chart {
-  width: 200px; /* 每个图表的宽度 */
-  height: 200px; /* 每个图表的高度 */
+  width: 45%; /* 每个图表的宽度 */
+  height: 300px; /* 每个图表的高度 */
+  margin-bottom: 20px;
 }
 </style>
